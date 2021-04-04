@@ -8,6 +8,7 @@ npm i vue
 npm i bootstrap@next
 npm i bootstrap-icons
 npm i chart.js
+npm install --save @popperjs/core
 ```
 
 ### Compiles and hot-reloads for development
