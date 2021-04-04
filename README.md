@@ -2,7 +2,9 @@
 
 ## Project setup
 ```
-npm install
+npm i bootstrap@next
+npm i bootstrap-icons
+npm i chart.js
 ```
 
 ### Compiles and hot-reloads for development

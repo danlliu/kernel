@@ -1,0 +1,71 @@
+/* COLORS */
+:root {
+    --tag0: #e3170aff;
+    --tag1: #5e8c61ff;
+    --tag2: #407076ff;
+    --tag3: #f7b32bff;
+    --tag4: #2bd9feff;
+    --tag5: #7353baff;
+    --tag6: #04f06aff;
+    --tag7: #e1bc29ff;
+    --tag8: #be3e82ff;
+    --tag9: #623ceaff;
+    --taga: #e15554ff;
+    --tagb: #b2b1cfff;
+    --tagc: #84c318ff;
+    --tagd: #e6beaeff;
+    --tage: #b98ea7ff;
+    --tagf: #17bebbff;
+}
+
+.body {
+    margin: 0 15%;
+    transition: opacity 1s ease;
+}
+
+.body.body-hidden {
+    display: none;
+    opacity: 0;
+}
+
+.tag.tag-0 { background-color: var(--tag0) !important; }
+.tag.tag-1 { background-color: var(--tag1) !important; }
+.tag.tag-2 { background-color: var(--tag2) !important; }
+.tag.tag-3 { background-color: var(--tag3) !important; }
+.tag.tag-4 { background-color: var(--tag4) !important; }
+.tag.tag-5 { background-color: var(--tag5) !important; }
+.tag.tag-6 { background-color: var(--tag6) !important; }
+.tag.tag-7 { background-color: var(--tag7) !important; }
+.tag.tag-8 { background-color: var(--tag8) !important; }
+.tag.tag-9 { background-color: var(--tag9) !important; }
+.tag.tag-a { background-color: var(--taga) !important; }
+.tag.tag-b { background-color: var(--tagb) !important; }
+.tag.tag-c { background-color: var(--tagc) !important; }
+.tag.tag-d { background-color: var(--tagd) !important; }
+.tag.tag-e { background-color: var(--tage) !important; }
+.tag.tag-f { background-color: var(--tagf) !important; }
+
+/* Hover button */
+
+.hover-button {
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    width: 56px;
+    transition: width 0.35s ease !important;
+}
+
+.hover-button-text {
+    font-size: 1rem;
+    display: none;
+    overflow-x: hidden;
+    overflow-y: hidden;
+}
+
+.hover-button:hover {
+    width: 128px;
+}
+
+.hover-button:hover .hover-button-text {
+    display: inline-block;
+}
