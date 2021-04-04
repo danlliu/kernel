@@ -11,8 +11,9 @@
             </div>
 
             <div class="col-3" id="buttonDiv">
-                <button class="btn btn-lg btn-primary w-100 m-1">take a break</button>
-                <button class="btn btn-lg btn-secondary w-100 m-1">finish today</button>
+                <button class="btn btn-lg btn-primary w-100 m-1">break time!</button>
+                <button class="btn btn-lg btn-secondary w-100 m-1" @click="modals['finishDayModal'].show()">finish
+                    today</button>
             </div>
 
         </div>
@@ -64,17 +65,41 @@
             </div>
 
             <div class="m-3" id="tasks">
-                <div v-for="task in tasks" :key="task.id">
-                    <TaskEntry :task-name="task.name" :tag="task.tag" :due-date="task.duedate"
-                               :stopwatch-time="task.timespent" :starred="task.starred" :running="task.id === runningId" />
-                    <hr/>
-                </div>
+                <transition-group name="tasklist" tag="div" class="w-100">
+                    <div v-for="task in tasks" class="tasklist-item" :key="task.id">
+                        <TaskEntry :task-name="task.name" :tag="task.tag" :due-date="task.duedate"
+                                   :stopwatch-time="task.timespent" :starred="task.starred" :running="task.id === runningId" />
+                        <hr/>
+                    </div>
+                </transition-group>
             </div>
 
         </div>
 
         <div class="body body-hidden p-3" id="newTaskForm">
             <h1>hi 2</h1>
+        </div>
+
+        <div class="modal fade" tabindex="-1" id="finishDayModal" ref="finishDayModal">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">finish today?</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"/>
+                    </div>
+                    <div class="modal-body">
+                        <p>Congrats on making it through the day! Do you wish to finish for today? This will hide
+                            all tasks you've marked as finished in your task list. You'll always be able to go back
+                            and work on more tasks later, but the ones currently marked as finished won't be
+                            available.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">no, still
+                            working.</button>
+                        <button type="button" class="btn btn-primary">yes!</button>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <router-link class="btn badge rounded-pill bg-info bi-graph-up hover-button"
@@ -88,6 +113,7 @@
 <script>
 
     import TaskEntry from "../components/TaskEntry";
+    import Modal from "bootstrap/js/src/modal";
 
     export default {
         name: "Dashboard",
@@ -137,14 +163,44 @@
                     timespent: 482,
                     starred: false
                 }
-            ]
-        }; }
+            ],
+            modals: {}
+        }; },
+        mounted() {
+            this.modals['finishDayModal'] = new Modal(this.$refs['finishDayModal']);
+        }
     }
 
 </script>
 
 <style scoped>
-#tasks div:last-child hr {
-    display: none;
-}
+    #tasks div div:last-child hr {
+        display: none;
+    }
+
+    /* transition group */
+
+    .tasklist-item {
+        transition: all 1s, color 0.25s ease, background-color 0.5s ease;
+        margin-bottom: 10px;
+        width: 70vw;
+    }
+
+    .tasklist-enter, .tasklist-leave-to {
+        opacity: 0;
+    }
+
+    .tasklist-enter-active, .tasklist-leave-active {
+        transition: all 1s, color 0.25s ease, background-color 0.5s ease;
+    }
+
+    .tasklist-move {
+        transition: all 1s, color 0.25s ease, background-color 0.5s ease;
+    }
+
+    .tasklist-leave-active {
+        position: absolute;
+        width: 70% !important;
+    }
+
 </style>
