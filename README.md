@@ -2,6 +2,9 @@
 
 ## Project setup
 ```
+sudo npm install -g npm
+sudo npm install -g @vue/cli
+npm i vue
 npm i bootstrap@next
 npm i bootstrap-icons
 npm i chart.js
