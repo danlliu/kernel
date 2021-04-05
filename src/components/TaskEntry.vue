@@ -1,6 +1,9 @@
 <template>
     <div class="task row align-items-center">
-        <button class="col-1 btn bi-circle"/>
+        <div class="col-1">
+            <input type="checkbox" id="completed" v-model="completed">
+            {{completed}}
+        </div>
         <div class="col-4">
             <h6 class="mb-0"><span class="badge tag" v-bind:class="`tag-${tagColorIndex}`">#{{tag}}</span></h6>
             <h4 class="mb-0">{{taskName}}</h4>
@@ -24,6 +27,7 @@
     export default {
         name: "TaskEntry",
         props: {
+            completed: Boolean,
             taskName: String,
             tag: String,
             starred: Boolean,

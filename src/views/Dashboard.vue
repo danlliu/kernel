@@ -62,10 +62,31 @@
                         </div>
                     </div>
                 </div>
+                    <div class="row align-items-center">
+                        <div class="col-1">
+                            <h6 class="text-center mb-0">Completed</h6>
+                        </div>
+                        <div class="col-4">
+                            <h6 class="mb-0">Task Name</h6>
+                        </div>
+                        <div class="col-1">
+                            <h6 class="text-center mb-0">Starred</h6>
+                        </div>
+                        <div class="col-2">
+                            <h6 class="text-center mb-0">Due Date</h6>
+                        </div>
+                        <div class="col-2">
+                            <h6 class="text-center mb-0">Time Spent</h6>
+                        </div>
+                        <hr/>
+                        
+                    </div>
             </div>
 
             <div class="m-3" id="tasks">
+                 
                 <transition-group name="tasklist" tag="div" class="w-100">
+
                     <div v-for="task in tasks" class="tasklist-item" :key="task.id">
                         <TaskEntry :task-name="task.name" :tag="task.tag" :due-date="task.duedate"
                                    :stopwatch-time="task.timespent" :starred="task.starred" :running="task.id === runningId" />
@@ -124,6 +145,7 @@
             runningId: "functional-eecs493",
             tasks: [
                 {
+                    completed: false,
                     id: "storyboards-eecs493",
                     name: "Storyboards",
                     tag: "EECS493",
@@ -132,6 +154,7 @@
                     starred: true
                 },
                 {
+                    completed: false,
                     id: "problem-chem420",
                     name: "Problem Set 7",
                     tag: "CHEM420",
@@ -140,6 +163,7 @@
                     starred: false
                 },
                 {
+                    completed: false,
                     id: "intro-chem483",
                     name: "Intro Report",
                     tag: "CHEM483",
@@ -148,6 +172,7 @@
                     starred: true
                 },
                 {
+                    completed: false,
                     id: "functional-eecs493",
                     name: "Functional Prototype",
                     tag: "EECS493",
@@ -156,6 +181,7 @@
                     starred: false
                 },
                 {
+                    completed: false,
                     id: "project4-eecs482",
                     name: "Project 4",
                     tag: "EECS482",
