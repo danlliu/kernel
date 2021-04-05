@@ -88,7 +88,7 @@
                 <transition-group name="tasklist" tag="div" class="w-100">
 
                     <div v-for="task in tasks" class="tasklist-item" :key="task.id">
-                        <TaskEntry :task-name="task.name" :tag="task.tag" :due-date="task.duedate"
+                        <TaskEntry :id="task.id" :completed="task.completed" :task-name="task.name" :tag="task.tag" :due-date="task.duedate"
                                    :stopwatch-time="task.timespent" :starred="task.starred" :running="task.id === runningId" />
                         <hr/>
                     </div>
@@ -135,7 +135,7 @@
 
     import TaskEntry from "../components/TaskEntry";
     import Modal from "bootstrap/js/src/modal";
-
+    import { bus } from '../main'
     export default {
         name: "Dashboard",
         components: {
@@ -143,57 +143,110 @@
         },
         data: function() { return {
             runningId: "functional-eecs493",
+            timerInterval: null,
             tasks: [
                 {
-                    completed: false,
                     id: "storyboards-eecs493",
                     name: "Storyboards",
                     tag: "EECS493",
                     duedate: "03-29",
                     timespent: 493,
-                    starred: true
+                    starred: true,
+                    completed: false
                 },
                 {
-                    completed: false,
                     id: "problem-chem420",
                     name: "Problem Set 7",
                     tag: "CHEM420",
                     duedate: "04-06",
                     timespent: 420,
-                    starred: false
+                    starred: false,
+                    completed: false
                 },
                 {
-                    completed: false,
                     id: "intro-chem483",
                     name: "Intro Report",
                     tag: "CHEM483",
                     duedate: "04-08",
                     timespent: 483,
-                    starred: true
+                    starred: true,
+                    completed: false
                 },
                 {
-                    completed: false,
                     id: "functional-eecs493",
                     name: "Functional Prototype",
                     tag: "EECS493",
                     duedate: "04-09",
                     timespent: 370,
-                    starred: false
+                    starred: false,
+                    completed: false
                 },
                 {
-                    completed: false,
                     id: "project4-eecs482",
                     name: "Project 4",
                     tag: "EECS482",
                     duedate: "04-21",
                     timespent: 482,
-                    starred: false
+                    starred: false,
+                    completed: false
                 }
             ],
             modals: {}
-        }; },
+        } },
         mounted() {
             this.modals['finishDayModal'] = new Modal(this.$refs['finishDayModal']);
+        },
+        created (){
+            bus.$on('changeStarred', (data) => {
+                var i;
+                for (i in this.tasks) {
+                    
+                    if (this.tasks[i].id === data)
+                    {
+                        this.tasks[i].starred= !this.tasks[i].starred
+                    }
+                }
+            })
+            bus.$on('changeChecked', (data) => {
+                var i;
+                for (i in this.tasks) {
+                    
+                    if (this.tasks[i].id === data)
+                    {
+                        this.tasks[i].completed= !this.tasks[i].completed
+                    }
+                }
+            })
+            bus.$on('increaseTimer', (data) => {
+                var i;
+                for (i in this.tasks) {
+                    if (this.tasks[i].id === data)
+                    {
+                        this.tasks[i].timespent += 1;
+                    }
+                }
+            })
+            bus.$on('changeTimer', (data) => {
+                if (this.runningId != data) { //something else is running, start running
+                    bus.$emit('clearTimer', this.runningId)
+                    this.runningId = data;
+                    
+                }
+                else{ //find the one thats running and pause it
+
+                    var i;
+                    for (i in this.tasks) {
+                        
+                        if (this.tasks[i].id === data)
+                        {
+                            if(data === this.runningId) //stop timer. 
+                            {
+                                this.runningId = null;
+                            }
+                        }
+                    }
+                }
+            })
         }
     }
 

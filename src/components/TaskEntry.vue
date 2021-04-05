@@ -1,8 +1,7 @@
 <template>
     <div class="task row align-items-center">
         <div class="col-1">
-            <input type="checkbox" id="completed" v-model="completed">
-            {{completed}}
+            <input type="checkbox" v-model="Dcompleted" v-on:click="onChecked()">
         </div>
         <div class="col-4">
             <h6 class="mb-0"><span class="badge tag" v-bind:class="`tag-${tagColorIndex}`">#{{tag}}</span></h6>
@@ -10,7 +9,7 @@
         </div>
         <div class="col-1">
             <button class="col-1 btn" v-bind:class="starred ? 'bi-star-fill' : 'bi-star'" style="color: gold;
-            font-size: 1.5rem;"/>
+            font-size: 1.5rem;" v-on:click="onStarred()"/>
         </div>
         <div class="col-2">
             <h6 class="text-center mb-0">{{monthDue}}</h6>
@@ -19,14 +18,17 @@
         <div class="col-2">
             <h5 class="text-center mb-0">{{timeElapsedString}}</h5>
         </div>
-        <button class="col-1 btn" v-bind:class="running ? 'bi-pause' : 'bi-play'" style="font-size: 2rem"/>
+        <button class="col-1 btn" v-bind:class="running ? 'bi-pause' : 'bi-play'" style="font-size: 2rem"
+         v-on:click="onTimerClick()"/>
     </div>
 </template>
 
 <script>
+    import { bus } from '../main'
     export default {
         name: "TaskEntry",
         props: {
+            id: String,
             completed: Boolean,
             taskName: String,
             tag: String,
@@ -35,6 +37,13 @@
             // stopwatchTime is in seconds
             stopwatchTime: Number,
             running: Boolean
+        },
+        data: function(){
+            return {
+            Dcompleted: this.completed,
+            timerInterval: null
+            }
+
         },
         computed: {
             tagColorIndex: function() {
@@ -62,7 +71,34 @@
             dayDue: function() {
                 return Number(this.dueDate.substr(3,2));
             }
-        }
+        },
+        created (){
+            bus.$on('clearTimer', (data) => {
+                if (this.id === data)
+                {
+                    clearInterval(this.timerInterval);
+                }
+            })
+        },
+        methods: {
+            onTimerClick() {
+                if (!this.running){ //start timer
+                    this.timerInterval = setInterval(() => (bus.$emit('increaseTimer', this.id)), 1000);
+                }
+                else //stop timer
+                {
+                    clearInterval(this.timerInterval);
+                }
+                
+               bus.$emit('changeTimer', this.id);
+            },
+            onStarred(){
+                bus.$emit('changeStarred', this.id);
+            },
+            onChecked(){
+                bus.$emit('changeChecked', this.id);
+            }
+        },
     }
 </script>
 

@@ -69,3 +69,8 @@
 .hover-button:hover .hover-button-text {
     display: inline-block;
 }
+
+.btn:focus, .btn:active {
+    outline: none !important;
+    box-shadow: none !important;
+}
