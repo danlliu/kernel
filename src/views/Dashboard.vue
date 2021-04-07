@@ -1,48 +1,128 @@
 <template>
-    <div>
-        <div class="topbar row justify-content-between p-3 position-fixed top-0 start-0 w-100 bg-light" style="height: 140px">
+    <div class="w-100">
+        <div class="topbar row justify-content-between m-0 p-3 position-fixed top-0 start-0 bg-light"
+             style="height: 140px; opacity: 1; z-index: 64; width: 100vw;">
             <div class="col-3" id="logo">
                 <h1>kernel</h1>
             </div>
 
-            <div class="col-4" id="addTaskDiv">
+            <div class="col-4 hideable" v-bind:class="isAdding && 'hidden'" id="addTaskDiv">
                 <h3 class="text-center mt-3">add a task</h3>
-                <button class="btn bi-plus-circle w-100" style="font-size: 1.5rem"/>
+                <button class="btn bi-plus-circle w-100 light-button" style="font-size: 1.5rem"
+                        @click="isAdding=true" v-bind:disabled="isAdding"/>
             </div>
 
-            <div class="col-3" id="buttonDiv">
-                <button class="btn btn-lg btn-primary w-100 m-1">break time!</button>
-                <button class="btn btn-lg btn-secondary w-100 m-1" @click="modals['finishDayModal'].show()">finish
+            <div class="col-3 hideable" v-bind:class="isAdding && 'hidden'" id="buttonDiv">
+                <button class="btn btn-lg btn-primary w-100 m-1" v-bind:disabled="isAdding">break time!</button>
+                <button class="btn btn-lg btn-secondary w-100 m-1" v-bind:disabled="isAdding" @click="modals['finishDayModal'].show()">finish
                     today</button>
             </div>
 
         </div>
 
-        <hr style="margin-top: 140px"/>
+        <hr class="position-fixed w-100 m-0" style="left: 0; top: 140px;"/>
 
-        <div class="body p-3" id="dashboard">
-            <div class="row justify-content-between mb-3" id="task-table-header">
-                <div class="col">
-                    <div class="btn-group">
-                        <button class="btn btn-outline-secondary bi-sort-up"/>
-                        <button class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
-                                data-bs-toggle="dropdown">Sort by Due
-                            Date </button>
-                        <div class="dropdown-menu">
-                            <a class="dropdown-item">Sort by Due Date</a>
-                            <a class="dropdown-item">Sort by Time Elapsed</a>
-                            <a class="dropdown-item">Sort by Tag</a>
-                            <a class="dropdown-item">Sort by Starred</a>
+        <div class="d-flex justify-content-end w-100" style="margin-top: 140px;">
+            <div class="body p-3" v-bind:class="isAdding || 'hidden'" id="newTaskFormSpace"/>
+            <div class="body p-3" v-bind:class="isAdding && 'smaller'" id="dashboard">
+                <div class="row justify-content-between mb-4" id="task-table-header">
+                    <div class="col">
+                        <div class="btn-group">
+                            <button class="btn btn-outline-secondary bi-sort-up"/>
+                            <button class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
+                                    data-bs-toggle="dropdown">Sort by Due
+                                Date </button>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item">Sort by Due Date</a>
+                                <a class="dropdown-item">Sort by Time Elapsed</a>
+                                <a class="dropdown-item">Sort by Tag</a>
+                                <a class="dropdown-item">Sort by Starred</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col d-flex justify-content-end">
+                        <div class="btn-group">
+                            <button class="btn btn-outline-secondary bi-filter" disabled aria-disabled="true"/>
+                            <button class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
+                                    data-bs-toggle="dropdown">Show <span class="badge bg-secondary">all tags</span></button>
+                            <div class="dropdown-menu" style="overflow-y: auto; max-height: 768%;">
+                                <a class="dropdown-item"><span class="badge bg-secondary">all tags</span></a>
+                                <a class="dropdown-item"><span class="badge tag tag-0">#EECS400</span></a>
+                                <a class="dropdown-item"><span class="badge tag tag-1">#EECS401</span></a>
+                                <a class="dropdown-item"><span class="badge tag tag-2">#EECS402</span></a>
+                                <a class="dropdown-item"><span class="badge tag tag-3">#EECS403</span></a>
+                                <a class="dropdown-item"><span class="badge tag tag-4">#EECS404</span></a>
+                                <a class="dropdown-item"><span class="badge tag tag-5">#EECS405</span></a>
+                                <a class="dropdown-item"><span class="badge tag tag-6">#EECS406</span></a>
+                                <a class="dropdown-item"><span class="badge tag tag-7">#EECS407</span></a>
+                                <a class="dropdown-item"><span class="badge tag tag-8">#EECS408</span></a>
+                                <a class="dropdown-item"><span class="badge tag tag-9">#EECS409</span></a>
+                                <a class="dropdown-item"><span class="badge tag tag-a">#EECS40a</span></a>
+                                <a class="dropdown-item"><span class="badge tag tag-b">#EECS40b</span></a>
+                                <a class="dropdown-item"><span class="badge tag tag-c">#EECS40c</span></a>
+                                <a class="dropdown-item"><span class="badge tag tag-d">#EECS40d</span></a>
+                                <a class="dropdown-item"><span class="badge tag tag-e">#EECS40e</span></a>
+                                <a class="dropdown-item"><span class="badge tag tag-f">#EECS40f</span></a>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="col">
+                <div id="tasks">
+                    <transition-group name="tasklist" tag="div" class="w-100">
+                        <div class="tasklist-item" id="header" :key="'header'">
+                            <div class="row align-items-center">
+                                <div class="col-1">
+                                    <h6 class="text-center mb-0">Done?</h6>
+                                </div>
+                                <div class="col-4">
+                                    <h6 class="mb-0">Task</h6>
+                                </div>
+                                <div class="col-1">
+                                    <h6 class="text-center mb-0">Starred</h6>
+                                </div>
+                                <div class="col-2">
+                                    <h6 class="text-center mb-0">Due</h6>
+                                </div>
+                                <div class="col-2">
+                                    <h6 class="text-center mb-0">Time Spent</h6>
+                                </div>
+                                <div class="col-1"/>
+                            </div>
+                            <hr/>
+                        </div>
+                        <div v-for="task in tasks" class="tasklist-item" :key="task.id">
+                            <TaskEntry :id="task.id" :completed="task.completed" :task-name="task.name"
+                                       :tag="task.tag" :due-date="task.duedate"
+                                       :stopwatch-time="task.timespent" :starred="task.starred"
+                                       :running="task.id === runningId"
+
+                                       @changeTimer="changeTimer"
+                                       @increaseTimer="increaseTimer"
+                                       @changeStarred="changeStarred"
+                                       @changeChecked="changeChecked"
+
+                            />
+                            <hr/>
+                        </div>
+                    </transition-group>
+                </div>
+            </div>
+        </div>
+
+        <div id="newTaskForm" v-bind:class="isAdding || 'hidden'">
+            <h3>add a task</h3>
+            <form>
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="tasknameInput" placeholder="Task name"/>
+                    <label for="tasknameInput">Task name</label>
+                </div>
+                <div class="input-group form-floating mb-0">
+                    <span class="input-group-text">#</span>
                     <div class="btn-group">
-                        <button class="btn btn-outline-secondary bi-filter" disabled aria-disabled="true"/>
-                        <button class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
-                                data-bs-toggle="dropdown">Show <span class="badge bg-secondary">all tags</span></button>
+                        <button class="btn btn-outline-secondary dropdown-toggle"
+                                data-bs-toggle="dropdown"><span class="badge bg-secondary">no tag</span></button>
                         <div class="dropdown-menu" style="overflow-y: auto; max-height: 768%;">
-                            <a class="dropdown-item"><span class="badge bg-secondary">all tags</span></a>
+                            <a class="dropdown-item"><span class="badge bg-secondary">no tag</span></a>
                             <a class="dropdown-item"><span class="badge tag tag-0">#EECS400</span></a>
                             <a class="dropdown-item"><span class="badge tag tag-1">#EECS401</span></a>
                             <a class="dropdown-item"><span class="badge tag tag-2">#EECS402</span></a>
@@ -62,43 +142,30 @@
                         </div>
                     </div>
                 </div>
-                    <div class="row align-items-center">
-                        <div class="col-1">
-                            <h6 class="text-center mb-0">Completed</h6>
-                        </div>
-                        <div class="col-4">
-                            <h6 class="mb-0">Task Name</h6>
-                        </div>
-                        <div class="col-1">
-                            <h6 class="text-center mb-0">Starred</h6>
-                        </div>
-                        <div class="col-2">
-                            <h6 class="text-center mb-0">Due Date</h6>
-                        </div>
-                        <div class="col-2">
-                            <h6 class="text-center mb-0">Time Spent</h6>
-                        </div>
-                        <hr/>
-                        
-                    </div>
-            </div>
-
-            <div class="m-3" id="tasks">
-                 
-                <transition-group name="tasklist" tag="div" class="w-100">
-
-                    <div v-for="task in tasks" class="tasklist-item" :key="task.id">
-                        <TaskEntry :id="task.id" :completed="task.completed" :task-name="task.name" :tag="task.tag" :due-date="task.duedate"
-                                   :stopwatch-time="task.timespent" :starred="task.starred" :running="task.id === runningId" />
-                        <hr/>
-                    </div>
-                </transition-group>
-            </div>
-
+                <div class="input-group mt-0">
+                    <small class="form-label">or <a href="#">add a label</a></small>
+                </div>
+            </form>
         </div>
 
-        <div class="body body-hidden p-3" id="newTaskForm">
-            <h1>hi 2</h1>
+        <div class="modal fade" tabindex="-1" id="addTagModal" ref="addTagModal">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">add a new tag</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"/>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="input-group">
+                                <span class="input-group-text">#</span>
+                                <input type="text" class="form-control" id="tagNameInput" placeholder="tag name"/>
+                                <label for="tagNameInput">Tag title</label>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="modal fade" tabindex="-1" id="finishDayModal" ref="finishDayModal">
@@ -135,14 +202,14 @@
 
     import TaskEntry from "../components/TaskEntry";
     import Modal from "bootstrap/js/src/modal";
-    import { bus } from '../main'
+    // import { bus } from '../main'
     export default {
         name: "Dashboard",
         components: {
             TaskEntry
         },
         data: function() { return {
-            runningId: "functional-eecs493",
+            runningId: "",
             timerInterval: null,
             tasks: [
                 {
@@ -191,70 +258,117 @@
                     completed: false
                 }
             ],
-            modals: {}
+            modals: {},
+            isAdding: false
         } },
-        mounted() {
-            this.modals['finishDayModal'] = new Modal(this.$refs['finishDayModal']);
-        },
-        created (){
-            bus.$on('changeStarred', (data) => {
-                var i;
-                for (i in this.tasks) {
-                    
-                    if (this.tasks[i].id === data)
-                    {
-                        this.tasks[i].starred= !this.tasks[i].starred
-                    }
-                }
-            })
-            bus.$on('changeChecked', (data) => {
-                var i;
-                for (i in this.tasks) {
-                    
-                    if (this.tasks[i].id === data)
-                    {
-                        this.tasks[i].completed= !this.tasks[i].completed
-                    }
-                }
-            })
-            bus.$on('increaseTimer', (data) => {
-                var i;
-                for (i in this.tasks) {
-                    if (this.tasks[i].id === data)
-                    {
-                        this.tasks[i].timespent += 1;
-                    }
-                }
-            })
-            bus.$on('changeTimer', (data) => {
-                if (this.runningId != data) { //something else is running, start running
-                    bus.$emit('clearTimer', this.runningId)
+        methods: {
+
+            changeTimer: function(data) {
+                if (this.runningId !== data) { //something else is running, start running
+                    this.$emit('clearTimer', this.runningId);
                     this.runningId = data;
-                    
                 }
                 else{ //find the one thats running and pause it
+                    for (let i in this.tasks) {
 
-                    var i;
-                    for (i in this.tasks) {
-                        
                         if (this.tasks[i].id === data)
                         {
-                            if(data === this.runningId) //stop timer. 
+                            if(data === this.runningId) //stop timer.
                             {
                                 this.runningId = null;
                             }
                         }
                     }
                 }
-            })
+            },
+
+            increaseTimer: function(data) {
+                for (let i in this.tasks) {
+                    if (this.tasks[i].id === data)
+                    {
+                        this.tasks[i].timespent += 1;
+                    }
+                }
+            },
+
+            changeChecked: function(data) {
+                for (let i in this.tasks) {
+                    if (this.tasks[i].id === data)
+                    {
+                        this.tasks[i].completed= !this.tasks[i].completed
+                    }
+                }
+            },
+
+            changeStarred: function(data) {
+                for (let i in this.tasks) {
+                    if (this.tasks[i].id === data)
+                    {
+                        this.tasks[i].starred= !this.tasks[i].starred
+                    }
+                }
+            }
+
+        },
+        mounted() {
+            this.modals['finishDayModal'] = new Modal(this.$refs['finishDayModal']);
+            this.modals['addTagModal'] = new Modal(this.$refs['addTagModal']);
         }
     }
 
 </script>
 
 <style scoped>
+
+    #header h6 {
+        font-size: 1.25rem;
+    }
+
     #tasks div div:last-child hr {
         display: none;
+    }
+
+    #dashboard {
+        width: 100%;
+        transition: width 1.0s ease;
+    }
+
+    #dashboard > div {
+        margin: 0 15%;
+        transition: margin-left 0.75s ease, margin-right 0.75s ease;
+    }
+
+    #dashboard.smaller {
+        width: 60%;
+    }
+
+    #dashboard.smaller > div {
+        margin: 0;
+    }
+
+    #newTaskFormSpace {
+        width: 30%;
+        transition: width 1s ease, opacity 0.25s ease 0.25s;
+    }
+
+    #newTaskFormSpace.hidden {
+        width: 0;
+        z-index: -64;
+        opacity: 0;
+    }
+
+    #newTaskForm {
+        width: 40%;
+        padding: 16px;
+        position: fixed;
+        left: 0;
+        top: 156px;
+        transition: left 1s ease;
+    }
+
+    #newTaskForm.hidden {
+        left: -60%;
+        z-index: -64;
     }
 
     /* transition group */
@@ -262,7 +376,6 @@
     .tasklist-item {
         transition: all 1s, color 0.25s ease, background-color 0.5s ease;
         margin-bottom: 10px;
-        width: 70vw;
     }
 
     .tasklist-enter, .tasklist-leave-to {

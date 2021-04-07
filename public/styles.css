@@ -19,12 +19,21 @@
 }
 
 .body {
-    margin: 0 15%;
+    z-index: 0;
     transition: opacity 1s ease;
 }
 
 .body.body-hidden {
     display: none;
+    z-index: -64;
+    opacity: 0;
+}
+
+.hideable {
+    transition: opacity 0.3s ease;
+}
+
+.hideable.hidden {
     opacity: 0;
 }
 
@@ -44,6 +53,12 @@
 .tag.tag-d { background-color: var(--tagd) !important; }
 .tag.tag-e { background-color: var(--tage) !important; }
 .tag.tag-f { background-color: var(--tagf) !important; }
+
+/* Light button */
+
+.light-button:hover {
+    background-color: #F0F0F0;
+}
 
 /* Hover button */
 

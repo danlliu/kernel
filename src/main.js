@@ -9,7 +9,6 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap-icons/font/bootstrap-icons.css'
 
 Vue.config.productionTip = false
-export const bus = new Vue();
 new Vue({
   router,
   render: h => h(App)
