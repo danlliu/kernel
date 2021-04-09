@@ -303,9 +303,26 @@
 
             newTag: function() {
 
+            },
+
+            getData: function() {
+                if (localStorage.tasks) {
+                    console.log("data retrieved");
+                    this.tasks = JSON.parse(localStorage.tasks);
+                }
+            },
+
+            storeData: function() {
+                localStorage.tasks = JSON.stringify(this.tasks);
             }
 
         },
+
+        created() {
+            window.addEventListener('beforeunload', this.storeData);
+            this.getData();
+        },
+
         mounted() {
             this.modals['finishDayModal'] = new Modal(this.$refs['finishDayModal']);
             this.modals['addTagModal'] = new Modal(this.$refs['addTagModal']);
