@@ -47,22 +47,9 @@
                                     data-bs-toggle="dropdown">Show <span class="badge bg-secondary">all tags</span></button>
                             <div class="dropdown-menu" style="overflow-y: auto; max-height: 768%;">
                                 <a class="dropdown-item"><span class="badge bg-secondary">all tags</span></a>
-                                <a class="dropdown-item"><span class="badge tag tag-0">#EECS400</span></a>
-                                <a class="dropdown-item"><span class="badge tag tag-1">#EECS401</span></a>
-                                <a class="dropdown-item"><span class="badge tag tag-2">#EECS402</span></a>
-                                <a class="dropdown-item"><span class="badge tag tag-3">#EECS403</span></a>
-                                <a class="dropdown-item"><span class="badge tag tag-4">#EECS404</span></a>
-                                <a class="dropdown-item"><span class="badge tag tag-5">#EECS405</span></a>
-                                <a class="dropdown-item"><span class="badge tag tag-6">#EECS406</span></a>
-                                <a class="dropdown-item"><span class="badge tag tag-7">#EECS407</span></a>
-                                <a class="dropdown-item"><span class="badge tag tag-8">#EECS408</span></a>
-                                <a class="dropdown-item"><span class="badge tag tag-9">#EECS409</span></a>
-                                <a class="dropdown-item"><span class="badge tag tag-a">#EECS40a</span></a>
-                                <a class="dropdown-item"><span class="badge tag tag-b">#EECS40b</span></a>
-                                <a class="dropdown-item"><span class="badge tag tag-c">#EECS40c</span></a>
-                                <a class="dropdown-item"><span class="badge tag tag-d">#EECS40d</span></a>
-                                <a class="dropdown-item"><span class="badge tag tag-e">#EECS40e</span></a>
-                                <a class="dropdown-item"><span class="badge tag tag-f">#EECS40f</span></a>
+                                <a v-for="tag in tags" class="dropdown-item" :key="tag.tag">
+                                    <span class="badge tag" :class="'tag-'+tag.style">#{{tag.tag}}</span>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -123,27 +110,15 @@
                                 data-bs-toggle="dropdown"><span class="badge bg-secondary">no tag</span></button>
                         <div class="dropdown-menu" style="overflow-y: auto; max-height: 768%;">
                             <a class="dropdown-item"><span class="badge bg-secondary">no tag</span></a>
-                            <a class="dropdown-item"><span class="badge tag tag-0">#EECS400</span></a>
-                            <a class="dropdown-item"><span class="badge tag tag-1">#EECS401</span></a>
-                            <a class="dropdown-item"><span class="badge tag tag-2">#EECS402</span></a>
-                            <a class="dropdown-item"><span class="badge tag tag-3">#EECS403</span></a>
-                            <a class="dropdown-item"><span class="badge tag tag-4">#EECS404</span></a>
-                            <a class="dropdown-item"><span class="badge tag tag-5">#EECS405</span></a>
-                            <a class="dropdown-item"><span class="badge tag tag-6">#EECS406</span></a>
-                            <a class="dropdown-item"><span class="badge tag tag-7">#EECS407</span></a>
-                            <a class="dropdown-item"><span class="badge tag tag-8">#EECS408</span></a>
-                            <a class="dropdown-item"><span class="badge tag tag-9">#EECS409</span></a>
-                            <a class="dropdown-item"><span class="badge tag tag-a">#EECS40a</span></a>
-                            <a class="dropdown-item"><span class="badge tag tag-b">#EECS40b</span></a>
-                            <a class="dropdown-item"><span class="badge tag tag-c">#EECS40c</span></a>
-                            <a class="dropdown-item"><span class="badge tag tag-d">#EECS40d</span></a>
-                            <a class="dropdown-item"><span class="badge tag tag-e">#EECS40e</span></a>
-                            <a class="dropdown-item"><span class="badge tag tag-f">#EECS40f</span></a>
+                            <a class="dropdown-item" v-for="tag in tags" :key="tag.tag">
+                                <span class="badge tag" :class="'tag-'+tag.style">#{{tag.tag}}</span>
+                            </a>
                         </div>
                     </div>
                 </div>
                 <div class="input-group mt-0">
-                    <small class="form-label">or <a href="#">add a label</a></small>
+                    <small class="form-label">or
+                        <a class="link-primary" @click="modals['addTagModal'].show()">add a tag</a></small>
                 </div>
             </form>
         </div>
@@ -156,12 +131,23 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"/>
                     </div>
                     <div class="modal-body">
-                        <form>
-                            <div class="input-group">
+                        <form @submit.prevent="newTag">
+                            <div class="input-group mb-3">
                                 <span class="input-group-text">#</span>
                                 <input type="text" class="form-control" id="tagNameInput" placeholder="tag name"/>
-                                <label for="tagNameInput">Tag title</label>
                             </div>
+                            <h5>choose tag color:</h5>
+                            <div class="input-group mb-3">
+                                <div class="form-check form-check-inline" v-for="i in
+                                ['0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f']" :key="i">
+                                    <div class="d-flex align-items-center justify-content-between w-100">
+                                        <input class="form-check-input" type="radio" :id="'tag'+i"/>
+                                        <label class="form-check-label ms-1"
+                                               :for="'tag'+i"><span class="badge tag" :class="'tag-'+i">#tag</span></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">create tag</button>
                         </form>
                     </div>
                 </div>
@@ -211,6 +197,12 @@
         data: function() { return {
             runningId: "",
             timerInterval: null,
+            tags: [
+                {tag: "EECS493", style: 0},
+                {tag: "EECS482", style: 1},
+                {tag: "CHEM483", style: 2},
+                {tag: "CHEM420", style: 3}
+            ],
             tasks: [
                 {
                     id: "storyboards-eecs493",
@@ -307,6 +299,10 @@
                         this.tasks[i].starred= !this.tasks[i].starred
                     }
                 }
+            },
+
+            newTag: function() {
+
             }
 
         },
