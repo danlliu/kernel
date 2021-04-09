@@ -304,14 +304,15 @@
             newTag: function() {
 
             },
-
+            
+            // Get data from local storage to initialize tasks
             getData: function() {
                 if (localStorage.tasks) {
-                    console.log("data retrieved");
                     this.tasks = JSON.parse(localStorage.tasks);
                 }
             },
 
+            // Store task data in local storage
             storeData: function() {
                 localStorage.tasks = JSON.stringify(this.tasks);
             }
@@ -319,13 +320,22 @@
         },
 
         created() {
-            window.addEventListener('beforeunload', this.storeData);
             this.getData();
         },
 
         mounted() {
             this.modals['finishDayModal'] = new Modal(this.$refs['finishDayModal']);
             this.modals['addTagModal'] = new Modal(this.$refs['addTagModal']);
+        },
+
+        watch: {
+            // Update local storage with task updates
+            tasks: { 
+                deep: true, // watches for changes anywhere in the tasks object 
+                handler() {
+                    this.storeData();
+                }
+            }
         }
     }
 

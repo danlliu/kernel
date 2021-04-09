@@ -1,7 +1,7 @@
 <template>
     <div class="task row align-items-center">
         <div class="col-1">
-            <input type="checkbox" v-model="Dcompleted" @click="onChecked">
+            <input type="checkbox" v-model="Dcompleted" @click="onChecked" autocomplete="off"> <!-- autocomplete prevents caching -->
         </div>
         <div class="col-4">
             <h6 class="mb-0"><span class="badge tag" v-bind:class="`tag-${tagColorIndex}`">#{{tag}}</span></h6>
