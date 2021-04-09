@@ -65,10 +65,10 @@
             monthDue: function() {
                 let MONTHS = ['JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST', 'SEPTEMBER',
                     'OCTOBER', 'NOVEMBER', 'DECEMBER'];
-                return MONTHS[Number(this.dueDate.substr(0,2)) - 1];
+                return MONTHS[Number(this.dueDate.substr(5,2)) - 1];
             },
             dayDue: function() {
-                return Number(this.dueDate.substr(3,2));
+                return Number(this.dueDate.substr(8,2));
             }
         },
         created (){

@@ -98,19 +98,28 @@
 
         <div id="newTaskForm" v-bind:class="isAdding || 'hidden'">
             <h3>add a task</h3>
-            <form>
+            <form @submit.prevent="addTask">
                 <div class="form-floating mb-3">
-                    <input type="text" class="form-control" id="tasknameInput" placeholder="Task name"/>
+                    <input type="text" class="form-control" id="tasknameInput" placeholder="Task name"
+                           v-model="addingTask.name"/>
                     <label for="tasknameInput">Task name</label>
                 </div>
                 <div class="input-group form-floating mb-0">
                     <span class="input-group-text">#</span>
                     <div class="btn-group">
                         <button class="btn btn-outline-secondary dropdown-toggle"
-                                data-bs-toggle="dropdown"><span class="badge bg-secondary">no tag</span></button>
+                                data-bs-toggle="dropdown">
+                            <span v-if="addingTask.tag === ''" class="badge bg-secondary">no tag</span>
+                            <span v-else class="badge tag" :class="'tag-'+addingTask.tagstyle">
+                                    #{{addingTask.tag}}
+                                </span>
+                        </button>
                         <div class="dropdown-menu" style="overflow-y: auto; max-height: 768%;">
-                            <a class="dropdown-item"><span class="badge bg-secondary">no tag</span></a>
-                            <a class="dropdown-item" v-for="tag in tags" :key="tag.tag">
+                            <a class="dropdown-item" @click="addingTask.tag = ''">
+                                <span class="badge bg-secondary">no tag</span>
+                            </a>
+                            <a class="dropdown-item" v-for="tag in tags" :key="tag.tag"
+                               @click="() => {addingTask.tag = tag.tag; addingTask.tagstyle = tag.style}">
                                 <span class="badge tag" :class="'tag-'+tag.style">#{{tag.tag}}</span>
                             </a>
                         </div>
@@ -120,6 +129,12 @@
                     <small class="form-label">or
                         <a class="link-primary" @click="modals['addTagModal'].show()">add a tag</a></small>
                 </div>
+                <div class="input-group form-floating mb-3">
+                    <input type="date" class="form-control" id="dueDateInput" placeholder="2020-01-01"
+                           v-model="addingTask.duedate"/>
+                    <label for="dueDateInput">Due date</label>
+                </div>
+                <button type="submit" class="btn btn-primary">add task</button>
             </form>
         </div>
 
@@ -138,13 +153,13 @@
                             </div>
                             <h5>choose tag color:</h5>
                             <div class="input-group mb-3">
-                                <div class="form-check form-check-inline" v-for="i in
+                                <div class="form-check form-check-inline d-flex align-items-center justify-content-between w-100" v-for="i in
                                 ['0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f']" :key="i">
-                                    <div class="d-flex align-items-center justify-content-between w-100">
+
                                         <input class="form-check-input" type="radio" :id="'tag'+i"/>
                                         <label class="form-check-label ms-1"
                                                :for="'tag'+i"><span class="badge tag" :class="'tag-'+i">#tag</span></label>
-                                    </div>
+                                    
                                 </div>
                             </div>
                             <button type="submit" class="btn btn-primary">create tag</button>
@@ -205,53 +220,59 @@
             ],
             tasks: [
                 {
-                    id: "storyboards-eecs493",
+                    id: "storyboards-eecs493-0",
                     name: "Storyboards",
                     tag: "EECS493",
-                    duedate: "03-29",
+                    duedate: "2021-03-29",
                     timespent: 493,
                     starred: true,
                     completed: false
                 },
                 {
-                    id: "problem-chem420",
-                    name: "Problem Set 7",
-                    tag: "CHEM420",
-                    duedate: "04-06",
-                    timespent: 420,
-                    starred: false,
-                    completed: false
-                },
-                {
-                    id: "intro-chem483",
+                    id: "intro-chem483-0",
                     name: "Intro Report",
                     tag: "CHEM483",
-                    duedate: "04-08",
+                    duedate: "2021-04-08",
                     timespent: 483,
                     starred: true,
                     completed: false
                 },
                 {
-                    id: "functional-eecs493",
+                    id: "functional-eecs493-0",
                     name: "Functional Prototype",
                     tag: "EECS493",
-                    duedate: "04-09",
+                    duedate: "2021-04-09",
                     timespent: 370,
                     starred: false,
                     completed: false
                 },
                 {
-                    id: "project4-eecs482",
+                    id: "project4-eecs482-0",
                     name: "Project 4",
                     tag: "EECS482",
-                    duedate: "04-21",
+                    duedate: "2021-04-21",
                     timespent: 482,
                     starred: false,
                     completed: false
                 }
             ],
             modals: {},
-            isAdding: false
+            isAdding: false,
+
+            // adding task
+            addingTask: {
+                name: "",
+                tag: "",
+                tagstyle: "0",
+                duedate: ""
+            },
+
+            // adding tag
+            addingTag: {
+                name: "",
+                style: "0"
+            }
+
         } },
         methods: {
 
@@ -299,6 +320,42 @@
                         this.tasks[i].starred= !this.tasks[i].starred
                     }
                 }
+            },
+
+            addTask: function() {
+
+                let fullname = this.addingTask.name;
+                let name = fullname.split(' ')[0].toLowerCase();
+                let tag = this.addingTask.tag;
+                let due = this.addingTask.duedate;
+                let num = 0;
+
+                let allIds = new Set();
+                for (let task of this.tasks) {
+                    allIds.add(task.id);
+                }
+
+                while (allIds.has(name + '-' + tag + '-' + num)) { ++num; }
+
+                this.tasks.push({
+                    id: name + '-' + tag + '-' + num,
+                    name: fullname,
+                    tag,
+                    duedate: due,
+                    timespent: 0,
+                    starred: false,
+                    completed: false
+                });
+
+                this.addingTask = {
+                    name: "",
+                    tag: "",
+                    tagstyle: "0",
+                    duedate: ""
+                };
+
+                this.isAdding = false;
+
             },
 
             newTag: function() {
