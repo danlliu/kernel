@@ -1,5 +1,5 @@
 <template>
-    <div class="task row align-items-center">
+    <div class="task row align-items-center" @clearTimer="clearTimer">
         <div class="col-1">
             <input type="checkbox" v-model="Dcompleted" @click="onChecked" autocomplete="off"> <!-- autocomplete prevents caching -->
         </div>
@@ -56,8 +56,8 @@
             },
             timeElapsedString: function() {
                 let seconds = this.stopwatchTime % 60;
-                let minutes = Math.round(this.stopwatchTime / 60) % 60;
-                let hours = Math.round(this.stopwatchTime / 3600);
+                let minutes = Math.floor(this.stopwatchTime / 60) % 60;
+                let hours = Math.floor(this.stopwatchTime / 3600);
                 return `${hours < 10 ? `0${hours}` : `${hours}`}:` +
                     `${minutes < 10 ? `0${minutes}` : `${minutes}`}:` +
                     `${seconds < 10 ? `0${seconds}` : `${seconds}`}`;
@@ -71,21 +71,32 @@
                 return Number(this.dueDate.substr(8,2));
             }
         },
-        created (){
-            this.$on('clearTimer', (data) => {
-                if (this.id === data)
-                {
-                    clearInterval(this.timerInterval);
-                }
-            })
+        beforeUpdate() {
+            clearInterval(this.timerInterval);
+        },
+        updated() {
+            if (this.running) {
+                this.timerInterval = setInterval(() => (this.$emit('increaseTimer', this.id)), 1000);
+            }
         },
         methods: {
+            clearTimer(data) {
+                console.log('clear timer');
+                console.log(data);
+                if (this.id === data)
+                {
+                    console.log("clear 1");
+                    clearInterval(this.timerInterval);
+                }
+            },
             onTimerClick() {
                 if (!this.running){ //start timer
+                    console.log("clear 2 if");
                     this.timerInterval = setInterval(() => (this.$emit('increaseTimer', this.id)), 1000);
                 }
                 else //stop timer
                 {
+                    console.log("clear 2");
                     clearInterval(this.timerInterval);
                 }
                 this.$emit('changeTimer', this.id);

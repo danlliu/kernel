@@ -101,7 +101,7 @@
             <form @submit.prevent="addTask">
                 <div class="form-floating mb-3">
                     <input type="text" class="form-control" id="tasknameInput" placeholder="Task name"
-                           v-model="addingTask.name"/>
+                           v-model="addingTask.name" required/>
                     <label for="tasknameInput">Task name</label>
                 </div>
                 <div class="input-group form-floating mb-0">
@@ -159,7 +159,7 @@
                                         <input class="form-check-input" type="radio" :id="'tag'+i"/>
                                         <label class="form-check-label ms-1"
                                                :for="'tag'+i"><span class="badge tag" :class="'tag-'+i">#tag</span></label>
-                                    
+
                                 </div>
                             </div>
                             <button type="submit" class="btn btn-primary">create tag</button>
@@ -277,17 +277,23 @@
         methods: {
 
             changeTimer: function(data) {
+                console.log('changeTimer');
+                console.log(this.runningId);
+                console.log(data);
                 if (this.runningId !== data) { //something else is running, start running
+                    console.log('if');
                     this.$emit('clearTimer', this.runningId);
                     this.runningId = data;
                 }
                 else{ //find the one thats running and pause it
+                    console.log('else');
                     for (let i in this.tasks) {
 
                         if (this.tasks[i].id === data)
                         {
                             if(data === this.runningId) //stop timer.
                             {
+                                this.$emit('clearTimer', this.runningId);
                                 this.runningId = null;
                             }
                         }
@@ -361,7 +367,7 @@
             newTag: function() {
 
             },
-            
+
             // Get data from local storage to initialize tasks
             getData: function() {
                 if (localStorage.tasks) {
@@ -387,8 +393,8 @@
 
         watch: {
             // Update local storage with task updates
-            tasks: { 
-                deep: true, // watches for changes anywhere in the tasks object 
+            tasks: {
+                deep: true, // watches for changes anywhere in the tasks object
                 handler() {
                     this.storeData();
                 }
