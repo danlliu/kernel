@@ -13,7 +13,7 @@
             </div>
 
             <div class="col-3 hideable" v-bind:class="isAdding && 'hidden'" id="buttonDiv">
-                <button class="btn btn-lg btn-primary w-100 m-1" v-bind:disabled="isAdding" 
+                <button class="btn btn-lg btn-primary w-100 m-1" v-bind:disabled="isAdding"
                     @click="startBreak">break time!</button>
                 <button class="btn btn-lg btn-secondary w-100 m-1" v-bind:disabled="isAdding" @click="modals['finishDayModal'].show()">finish
                     today</button>
@@ -26,35 +26,35 @@
         <div class="d-flex justify-content-end w-100" style="margin-top: 140px;">
             <div class="body p-3" v-bind:class="isAdding || 'hidden'" id="newTaskFormSpace"/>
             <div class="body p-3" v-bind:class="isAdding && 'smaller'" id="dashboard">
-                <div class="row justify-content-between mb-4" id="task-table-header">
-                    <div class="col">
-                        <div class="btn-group">
-                            <button class="btn btn-outline-secondary bi-sort-up"/>
-                            <button class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
-                                    data-bs-toggle="dropdown">Sort by Due
-                                Date </button>
-                            <div class="dropdown-menu">
-                                <a class="dropdown-item">Sort by Due Date</a>
-                                <a class="dropdown-item">Sort by Time Elapsed</a>
-                                <a class="dropdown-item">Sort by Tag</a>
-                                <a class="dropdown-item">Sort by Starred</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col d-flex justify-content-end">
-                        <div class="btn-group">
-                            <button class="btn btn-outline-secondary bi-filter" disabled aria-disabled="true"/>
-                            <button class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
-                                    data-bs-toggle="dropdown">Show <span class="badge bg-secondary">all tags</span></button>
-                            <div class="dropdown-menu" style="overflow-y: auto; max-height: 768%;">
-                                <a class="dropdown-item"><span class="badge bg-secondary">all tags</span></a>
-                                <a v-for="tag in tags" class="dropdown-item" :key="tag.tag">
-                                    <span class="badge tag" :class="'tag-'+tag.style">#{{tag.tag}}</span>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+<!--                <div class="row justify-content-between mb-4" id="task-table-header">-->
+<!--                    <div class="col">-->
+<!--                        <div class="btn-group">-->
+<!--                            <button class="btn btn-outline-secondary bi-sort-up"/>-->
+<!--                            <button class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"-->
+<!--                                    data-bs-toggle="dropdown">Sort by Due-->
+<!--                                Date </button>-->
+<!--                            <div class="dropdown-menu">-->
+<!--                                <a class="dropdown-item">Sort by Due Date</a>-->
+<!--                                <a class="dropdown-item">Sort by Time Elapsed</a>-->
+<!--                                <a class="dropdown-item">Sort by Tag</a>-->
+<!--                                <a class="dropdown-item">Sort by Starred</a>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <div class="col d-flex justify-content-end">-->
+<!--                        <div class="btn-group">-->
+<!--                            <button class="btn btn-outline-secondary bi-filter" disabled aria-disabled="true"/>-->
+<!--                            <button class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"-->
+<!--                                    data-bs-toggle="dropdown">Show <span class="badge bg-secondary">all tags</span></button>-->
+<!--                            <div class="dropdown-menu" style="overflow-y: auto; max-height: 768%;">-->
+<!--                                <a class="dropdown-item"><span class="badge bg-secondary">all tags</span></a>-->
+<!--                                <a v-for="tag in tags" class="dropdown-item" :key="tag.tag">-->
+<!--                                    <span class="badge tag" :class="'tag-'+tag.style">#{{tag.tag}}</span>-->
+<!--                                </a>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
                 <div id="tasks">
                     <transition-group name="tasklist" tag="div" class="w-100">
                         <div class="tasklist-item" id="header" :key="'header'">
@@ -79,7 +79,7 @@
                             <hr/>
                         </div>
                         <div v-for="task in tasks" class="tasklist-item" :key="task.id">
-                            <div v-if="task.visible !== false">
+                            <div class="w-100" v-if="task.visible !== false">
                                 <TaskEntry :id="task.id" :completed="task.completed" :task-name="task.name"
                                         :tag="task.tag" :due-date="task.duedate"
                                         :stopwatch-time="task.timespent" :starred="task.starred"
@@ -91,7 +91,7 @@
                                         @changeChecked="changeChecked"
 
                                 />
-                                <hr/>
+                                <hr class="w-100"/>
                             </div>
                         </div>
                     </transition-group>
@@ -194,7 +194,7 @@
             </div>
         </div>
 
-        <div class="modal fade" tabindex="-1" id="breakModal" ref="breakModal">
+        <div class="modal fade" tabindex="-1" id="breakModal" ref="breakModal" data-bs-backdrop="static" data-bs-keyboard="false">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -427,7 +427,7 @@
                     if (this.tasks[i].completed)
                     {
                         this.tasks[i].visible = false;
-                        
+
                     }
                     console.log(this.tasks[i].visible)
                 }
@@ -452,10 +452,10 @@
                     if (this.tasks[i].tag === 'break')
                     {
                         this.startingBreakTime = this.tasks[i].timespent;
-                        
+
                     }
                 }
-                this.modals['breakModal'].show(); 
+                this.modals['breakModal'].show();
                 this.breakInterval = setInterval(() => (this.increaseTimer('break')), 1000);
             },
             stopBreak: function()
@@ -472,7 +472,7 @@
         mounted() {
             this.modals['finishDayModal'] = new Modal(this.$refs['finishDayModal']);
             this.modals['addTagModal'] = new Modal(this.$refs['addTagModal']);
-            this.modals['breakModal'] = new Modal(this.$refs['breakModal']);
+            this.modals['breakModal'] = new Modal(this.$refs['breakModal'], {backdrop:'static', keyboard:false});
         },
 
         watch: {
@@ -495,7 +495,7 @@
         font-size: 1.25rem;
     }
 
-    #tasks div div:last-child hr {
+    #tasks div div div div:last-child hr {
         display: none;
     }
 
