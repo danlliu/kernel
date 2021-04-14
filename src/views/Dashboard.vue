@@ -3,7 +3,7 @@
         <div class="topbar row justify-content-between m-0 p-3 position-fixed top-0 start-0 bg-light"
              style="height: 140px; opacity: 1; z-index: 64; width: 100vw;">
             <div class="col-3" id="logo">
-                <h1>kernel</h1>
+                <img src="kernel_logo.png" alt="logo" width="280" height="56">
             </div>
 
             <div class="col-4 hideable" v-bind:class="isAdding && 'hidden'" id="addTaskDiv">
