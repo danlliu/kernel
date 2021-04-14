@@ -81,22 +81,18 @@
         },
         methods: {
             clearTimer(data) {
-                console.log('clear timer');
-                console.log(data);
+
                 if (this.id === data)
                 {
-                    console.log("clear 1");
                     clearInterval(this.timerInterval);
                 }
             },
             onTimerClick() {
                 if (!this.running){ //start timer
-                    console.log("clear 2 if");
                     this.timerInterval = setInterval(() => (this.$emit('increaseTimer', this.id)), 1000);
                 }
                 else //stop timer
                 {
-                    console.log("clear 2");
                     clearInterval(this.timerInterval);
                 }
                 this.$emit('changeTimer', this.id);
@@ -106,7 +102,7 @@
             },
             onChecked(){
                 this.$emit('changeChecked', this.id);
-            }
+            },
         },
     }
 </script>

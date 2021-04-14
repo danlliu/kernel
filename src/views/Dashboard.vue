@@ -13,7 +13,8 @@
             </div>
 
             <div class="col-3 hideable" v-bind:class="isAdding && 'hidden'" id="buttonDiv">
-                <button class="btn btn-lg btn-primary w-100 m-1" v-bind:disabled="isAdding">break time!</button>
+                <button class="btn btn-lg btn-primary w-100 m-1" v-bind:disabled="isAdding" 
+                    @click="startBreak">break time!</button>
                 <button class="btn btn-lg btn-secondary w-100 m-1" v-bind:disabled="isAdding" @click="modals['finishDayModal'].show()">finish
                     today</button>
             </div>
@@ -78,18 +79,20 @@
                             <hr/>
                         </div>
                         <div v-for="task in tasks" class="tasklist-item" :key="task.id">
-                            <TaskEntry :id="task.id" :completed="task.completed" :task-name="task.name"
-                                       :tag="task.tag" :due-date="task.duedate"
-                                       :stopwatch-time="task.timespent" :starred="task.starred"
-                                       :running="task.id === runningId"
+                            <div v-if="task.visible !== false">
+                                <TaskEntry :id="task.id" :completed="task.completed" :task-name="task.name"
+                                        :tag="task.tag" :due-date="task.duedate"
+                                        :stopwatch-time="task.timespent" :starred="task.starred"
+                                        :running="task.id === runningId"
 
-                                       @changeTimer="changeTimer"
-                                       @increaseTimer="increaseTimer"
-                                       @changeStarred="changeStarred"
-                                       @changeChecked="changeChecked"
+                                        @changeTimer="changeTimer"
+                                        @increaseTimer="increaseTimer"
+                                        @changeStarred="changeStarred"
+                                        @changeChecked="changeChecked"
 
-                            />
-                            <hr/>
+                                />
+                                <hr/>
+                            </div>
                         </div>
                     </transition-group>
                 </div>
@@ -185,11 +188,33 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">no, still
                             working.</button>
-                        <button type="button" class="btn btn-primary">yes!</button>
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="clearCompleted">yes!</button>
                     </div>
                 </div>
             </div>
         </div>
+
+        <div class="modal fade" tabindex="-1" id="breakModal" ref="breakModal">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Taking a break!</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"/>
+                    </div>
+                    <div class="modal-body">
+                        <div v-for="task in tasks" class="tasklist-item" :key="task.id">
+                            <div v-if="task.tag === 'break'">
+                                <h2> Time Spent Chilling: {{timeElapsedString(task.timespent)}} </h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="stopBreak">Back to Work</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 
         <router-link class="btn badge rounded-pill bg-info bi-graph-up hover-button"
                      style="font-size: 1.5rem; position: fixed; right: 32px; bottom: 32px;" to="/stats">
@@ -220,13 +245,24 @@
             ],
             tasks: [
                 {
+                    id: "break",
+                    name: "break",
+                    tag: "break",
+                    duedate: null,
+                    timespent: 0,
+                    starred: false,
+                    completed: false,
+                    visible: false
+                },
+                {
                     id: "storyboards-eecs493-0",
                     name: "Storyboards",
                     tag: "EECS493",
                     duedate: "2021-03-29",
                     timespent: 493,
                     starred: true,
-                    completed: false
+                    completed: false,
+                    visible: true
                 },
                 {
                     id: "intro-chem483-0",
@@ -235,7 +271,8 @@
                     duedate: "2021-04-08",
                     timespent: 483,
                     starred: true,
-                    completed: false
+                    completed: false,
+                    visible: true
                 },
                 {
                     id: "functional-eecs493-0",
@@ -244,7 +281,8 @@
                     duedate: "2021-04-09",
                     timespent: 370,
                     starred: false,
-                    completed: false
+                    completed: false,
+                    visible: true
                 },
                 {
                     id: "project4-eecs482-0",
@@ -253,18 +291,22 @@
                     duedate: "2021-04-21",
                     timespent: 482,
                     starred: false,
-                    completed: false
+                    completed: false,
+                    visible: true
                 }
             ],
             modals: {},
             isAdding: false,
+            breakInterval: null,
+            startingBreakTime: 0,
 
             // adding task
             addingTask: {
                 name: "",
                 tag: "",
                 tagstyle: "0",
-                duedate: ""
+                duedate: "",
+                visible: true
             },
 
             // adding tag
@@ -277,16 +319,12 @@
         methods: {
 
             changeTimer: function(data) {
-                console.log('changeTimer');
-                console.log(this.runningId);
-                console.log(data);
+
                 if (this.runningId !== data) { //something else is running, start running
-                    console.log('if');
                     this.$emit('clearTimer', this.runningId);
                     this.runningId = data;
                 }
                 else{ //find the one thats running and pause it
-                    console.log('else');
                     for (let i in this.tasks) {
 
                         if (this.tasks[i].id === data)
@@ -350,14 +388,16 @@
                     duedate: due,
                     timespent: 0,
                     starred: false,
-                    completed: false
+                    completed: false,
+                    visible: true
                 });
 
                 this.addingTask = {
                     name: "",
                     tag: "",
                     tagstyle: "0",
-                    duedate: ""
+                    duedate: "",
+                    visible: true
                 };
 
                 this.isAdding = false;
@@ -378,6 +418,49 @@
             // Store task data in local storage
             storeData: function() {
                 localStorage.tasks = JSON.stringify(this.tasks);
+            },
+
+            clearCompleted: function()
+            {
+                for (let i in this.tasks) {
+
+                    if (this.tasks[i].completed)
+                    {
+                        this.tasks[i].visible = false;
+                        
+                    }
+                    console.log(this.tasks[i].visible)
+                }
+                //this.$forceUpdate()
+                //this.storeData();
+                window.location.pathname = '/stats'
+            },
+            timeElapsedString: function(time) {
+                let displayTime = time - this.startingBreakTime;
+                let seconds = displayTime % 60;
+                let minutes = Math.floor(displayTime / 60) % 60;
+                let hours = Math.floor(displayTime / 3600);
+                return `${hours < 10 ? `0${hours}` : `${hours}`}:` +
+                    `${minutes < 10 ? `0${minutes}` : `${minutes}`}:` +
+                    `${seconds < 10 ? `0${seconds}` : `${seconds}`}`;
+            },
+            startBreak: function()
+            {
+
+                for (let i in this.tasks) {
+
+                    if (this.tasks[i].tag === 'break')
+                    {
+                        this.startingBreakTime = this.tasks[i].timespent;
+                        
+                    }
+                }
+                this.modals['breakModal'].show(); 
+                this.breakInterval = setInterval(() => (this.increaseTimer('break')), 1000);
+            },
+            stopBreak: function()
+            {
+                clearInterval(this.breakInterval);
             }
 
         },
@@ -389,6 +472,7 @@
         mounted() {
             this.modals['finishDayModal'] = new Modal(this.$refs['finishDayModal']);
             this.modals['addTagModal'] = new Modal(this.$refs['addTagModal']);
+            this.modals['breakModal'] = new Modal(this.$refs['breakModal']);
         },
 
         watch: {
@@ -401,6 +485,7 @@
             }
         }
     }
+
 
 </script>
 
