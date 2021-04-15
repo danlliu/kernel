@@ -81,7 +81,7 @@
                         <div v-for="task in tasks" class="tasklist-item" :key="task.id">
                             <div class="w-100" v-if="task.visible !== false">
                                 <TaskEntry :id="task.id" :completed="task.completed" :task-name="task.name"
-                                        :tag="task.tag" :due-date="task.duedate"
+                                        :tag="task.tag" :due-date="task.duedate" :tag-list="tags"
                                         :stopwatch-time="task.timespent" :starred="task.starred"
                                         :running="task.id === runningId"
 
@@ -104,7 +104,7 @@
             <form @submit.prevent="addTask">
                 <div class="form-floating mb-3">
                     <input type="text" class="form-control" id="tasknameInput" placeholder="Task name"
-                           v-model="addingTask.name" required/>
+                           v-model="addingTask.name" autocomplete="off" required/>
                     <label for="tasknameInput">Task name</label>
                 </div>
                 <div class="input-group form-floating mb-0">
@@ -152,20 +152,24 @@
                         <form @submit.prevent="newTag">
                             <div class="input-group mb-3">
                                 <span class="input-group-text">#</span>
-                                <input type="text" class="form-control" id="tagNameInput" placeholder="tag name"/>
+                                <input type="text" class="form-control" id="tagNameInput" placeholder="tag name"
+                                       v-model="addingTag.name" autocomplete="off"/>
                             </div>
                             <h5>choose tag color:</h5>
-                            <div class="input-group mb-3">
-                                <div class="form-check form-check-inline d-flex align-items-center justify-content-between w-100" v-for="i in
-                                ['0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f']" :key="i">
-
-                                        <input class="form-check-input" type="radio" :id="'tag'+i"/>
-                                        <label class="form-check-label ms-1"
-                                               :for="'tag'+i"><span class="badge tag" :class="'tag-'+i">#tag</span></label>
-
+                            <div>
+                            <div class="form-check form-check-inline" v-for="style in ['0', '1', '2', '3', '4', '5', '6', '7',
+                            '8',
+                             '9', 'a', 'b', 'c', 'd', 'e', 'f']" :key="style">
+                                <div class="d-flex align-items-center">
+                                    <input class="form-check-input" type="radio" name="style" :id="'tag' + style"
+                                           @click="addingTag.style=style">
+                                    <label class="form-check-label ms-1" :for="'tag' + style">
+                                        <span class="badge tag" :class="'tag-'+style">#tag</span>
+                                    </label>
                                 </div>
                             </div>
-                            <button type="submit" class="btn btn-primary">create tag</button>
+                            </div>
+                            <button type="submit" class="btn btn-primary mt-3">create tag</button>
                         </form>
                     </div>
                 </div>
@@ -405,7 +409,9 @@
             },
 
             newTag: function() {
-
+                this.tags.push({tag: this.addingTag.name, style: this.addingTag.style});
+                this.addingTag = {tag: "", style: 0};
+                this.modals['addTagModal'].hide();
             },
 
             // Get data from local storage to initialize tasks

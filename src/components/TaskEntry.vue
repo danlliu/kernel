@@ -31,6 +31,7 @@
             completed: Boolean,
             taskName: String,
             tag: String,
+            tagList: Array,
             starred: Boolean,
             dueDate: String,
             // stopwatchTime is in seconds
@@ -46,13 +47,12 @@
         },
         computed: {
             tagColorIndex: function() {
-                let tagColors = {
-                    "EECS493": 0,
-                    "EECS482": 1,
-                    "CHEM483": 2,
-                    "CHEM420": 3
-                };
-                return tagColors[this.tag];
+                for (let t of this.tagList) {
+                    if (t.tag === this.tag) {
+                        return t.style;
+                    }
+                }
+                return 0;
             },
             timeElapsedString: function() {
                 let seconds = this.stopwatchTime % 60;
