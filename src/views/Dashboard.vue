@@ -46,7 +46,7 @@
 
     <hr class="position-fixed w-100 m-0" style="left: 0; top: 140px" />
 
-    <div class="d-flex justify-content-end w-100" style="margin-top: 140px">
+    <div class="d-flex justify-content-end w-100" style="margin-top: 180px">
       <div
         class="body p-3"
         v-bind:class="isAdding || 'hidden'"
