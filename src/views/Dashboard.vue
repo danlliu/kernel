@@ -46,6 +46,104 @@
 
     <hr class="position-fixed w-100 m-0" style="left: 0; top: 140px" />
 
+    <div class="d-flex justify-content-end w-100" style="margin-top: 140px">
+      <div
+        class="body p-3"
+        v-bind:class="isAdding || 'hidden'"
+        id="newTaskFormSpace"
+      />
+      <div class="body p-3" v-bind:class="isAdding && 'smaller'" id="dashboard">
+        <!--                <div class="row justify-content-between mb-4" id="task-table-header">-->
+        <!--                    <div class="col">-->
+        <!--                        <div class="btn-group">-->
+        <!--                            <button class="btn btn-outline-secondary bi-sort-up"/>-->
+        <!--                            <button class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"-->
+        <!--                                    data-bs-toggle="dropdown">Sort by Due-->
+        <!--                                Date </button>-->
+        <!--                            <div class="dropdown-menu">-->
+        <!--                                <a class="dropdown-item">Sort by Due Date</a>-->
+        <!--                                <a class="dropdown-item">Sort by Time Elapsed</a>-->
+        <!--                                <a class="dropdown-item">Sort by Tag</a>-->
+        <!--                                <a class="dropdown-item">Sort by Starred</a>-->
+        <!--                            </div>-->
+        <!--                        </div>-->
+        <!--                    </div>-->
+        <!--                    <div class="col d-flex justify-content-end">-->
+        <!--                        <div class="btn-group">-->
+        <!--                            <button class="btn btn-outline-secondary bi-filter" disabled aria-disabled="true"/>-->
+        <!--                            <button class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"-->
+        <!--                                    data-bs-toggle="dropdown">Show <span class="badge bg-secondary">all tags</span></button>-->
+        <!--                            <div class="dropdown-menu" style="overflow-y: auto; max-height: 768%;">-->
+        <!--                                <a class="dropdown-item"><span class="badge bg-secondary">all tags</span></a>-->
+        <!--                                <a v-for="tag in tags" class="dropdown-item" :key="tag.tag">-->
+        <!--                                    <span class="badge tag" :class="'tag-'+tag.style">#{{tag.tag}}</span>-->
+        <!--                                </a>-->
+        <!--                            </div>-->
+        <!--                        </div>-->
+        <!--                    </div>-->
+        <!--                </div>-->
+        <div id="tasks">
+          <transition-group
+            name="tasklist"
+            tag="div"
+            class="w-100"
+            v-if="tasks.length !== 1"
+          >
+            <div class="tasklist-item" id="header" :key="'header'">
+              <div class="row align-items-center">
+                <div class="col-1">
+                  <h6 class="text-center mb-0">Done?</h6>
+                </div>
+                <div class="col-4">
+                  <h6 class="mb-0">Task</h6>
+                </div>
+                <div class="col-1">
+                  <h6 class="text-center mb-0">Starred</h6>
+                </div>
+                <div class="col-2">
+                  <h6 class="text-center mb-0">Due</h6>
+                </div>
+                <div class="col-2">
+                  <h6 class="text-center mb-0">Time Spent</h6>
+                </div>
+                <div class="col-1" />
+              </div>
+              <hr />
+            </div>
+            <div
+              v-for="idx in shownIndices"
+              class="tasklist-item"
+              :key="tasks[idx].id"
+            >
+              <div class="w-100" v-if="tasks[idx].visible !== false">
+                <TaskEntry
+                  :id="tasks[idx].id"
+                  :completed="tasks[idx].completed"
+                  :task-name="tasks[idx].name"
+                  :tag="tasks[idx].tag"
+                  :due-date="tasks[idx].duedate"
+                  :tag-list="tags"
+                  :stopwatch-time="tasks[idx].timespent"
+                  :starred="tasks[idx].starred"
+                  :running="tasks[idx].id === runningId"
+                  @changeTimer="changeTimer"
+                  @increaseTimer="increaseTimer"
+                  @changeStarred="changeStarred"
+                  @changeChecked="changeChecked"
+                />
+                <hr class="w-100" />
+              </div>
+            </div>
+          </transition-group>
+          <div class="text-center" v-else>
+            <h3>nothing to do!</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="position-fixed w-100 m-0" style="left: 0; top: 140px" />
+
     <div class="d-flex justify-content-end w-100" style="margin-top: 180px">
       <div
         class="body p-3"
