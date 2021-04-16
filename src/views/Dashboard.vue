@@ -56,7 +56,7 @@
 <!--                    </div>-->
 <!--                </div>-->
                 <div id="tasks">
-                    <transition-group name="tasklist" tag="div" class="w-100">
+                    <transition-group name="tasklist" tag="div" class="w-100" v-if="tasks.length !== 1">
                         <div class="tasklist-item" id="header" :key="'header'">
                             <div class="row align-items-center">
                                 <div class="col-1">
@@ -95,12 +95,16 @@
                             </div>
                         </div>
                     </transition-group>
+                    <div class="text-center" v-else>
+                        <h3>nothing to do!</h3>
+                    </div>
                 </div>
             </div>
         </div>
 
         <div id="newTaskForm" v-bind:class="isAdding || 'hidden'">
             <h3>add a task</h3>
+            <button class="btn btn-close position-absolute" style="top: 16px; right: 16px;" @click="isAdding = false"/>
             <form @submit.prevent="addTask">
                 <div class="form-floating mb-3">
                     <input type="text" class="form-control" id="tasknameInput" placeholder="Task name"
@@ -242,10 +246,6 @@
             runningId: "",
             timerInterval: null,
             tags: [
-                {tag: "EECS493", style: 0},
-                {tag: "EECS482", style: 1},
-                {tag: "CHEM483", style: 2},
-                {tag: "CHEM420", style: 3}
             ],
             tasks: [
                 {
@@ -257,46 +257,6 @@
                     starred: false,
                     completed: false,
                     visible: false
-                },
-                {
-                    id: "storyboards-eecs493-0",
-                    name: "Storyboards",
-                    tag: "EECS493",
-                    duedate: "2021-03-29",
-                    timespent: 493,
-                    starred: true,
-                    completed: false,
-                    visible: true
-                },
-                {
-                    id: "intro-chem483-0",
-                    name: "Intro Report",
-                    tag: "CHEM483",
-                    duedate: "2021-04-08",
-                    timespent: 483,
-                    starred: true,
-                    completed: false,
-                    visible: true
-                },
-                {
-                    id: "functional-eecs493-0",
-                    name: "Functional Prototype",
-                    tag: "EECS493",
-                    duedate: "2021-04-09",
-                    timespent: 370,
-                    starred: false,
-                    completed: false,
-                    visible: true
-                },
-                {
-                    id: "project4-eecs482-0",
-                    name: "Project 4",
-                    tag: "EECS482",
-                    duedate: "2021-04-21",
-                    timespent: 482,
-                    starred: false,
-                    completed: false,
-                    visible: true
                 }
             ],
             modals: {},
@@ -419,11 +379,15 @@
                 if (localStorage.tasks) {
                     this.tasks = JSON.parse(localStorage.tasks);
                 }
+                if (localStorage.tags) {
+                    this.tags = JSON.parse(localStorage.tags);
+                }
             },
 
             // Store task data in local storage
             storeData: function() {
                 localStorage.tasks = JSON.stringify(this.tasks);
+                localStorage.tags = JSON.stringify(this.tags);
             },
 
             clearCompleted: function()
@@ -488,6 +452,13 @@
                 handler() {
                     this.storeData();
                 }
+            },
+
+            tags: {
+                deep: true,
+                handler() {
+                    this.storeData();
+                }
             }
         }
     }
@@ -525,22 +496,25 @@
 
     #newTaskFormSpace {
         width: 30%;
-        transition: width 1s ease, opacity 0.25s ease 0.25s;
+        transition: width 1s ease, opacity 0.25s ease 0.25s, padding 0.25s ease 0.25s;
     }
 
     #newTaskFormSpace.hidden {
         width: 0;
         z-index: -64;
         opacity: 0;
+        padding: 0 !important;
     }
 
     #newTaskForm {
         width: 40%;
+        height: calc(100vh - 172px);
         padding: 16px;
         position: fixed;
         left: 0;
         top: 156px;
         transition: left 1s ease;
+        border-right: 1px solid #888;
     }
 
     #newTaskForm.hidden {
