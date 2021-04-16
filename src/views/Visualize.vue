@@ -58,8 +58,8 @@
             <div class="card-body">
               <h5 class="card-title">today's tasks</h5>
               <PieChart
-                :titles="['EECS493', 'EECS482', 'CHEM483', 'CHEM420']"
-                :data="[3, 5, 4, 2]"
+                :labels="Object.keys(tags)"
+                :data="Object.values(tags)"
               />
             </div>
           </div>
@@ -156,6 +156,10 @@ export default {
     return {
       modals: {},
       tab: 0,
+      tasks: [],
+      completed_tasks: [],
+      tags: {},
+      numPerTag: []
     };
   },
   methods: {
@@ -165,8 +169,23 @@ export default {
   },
   mounted() {
     this.modals["resetTasksModal"] = new Modal(this.$refs["resetTasksModal"]);
-    console.log(JSON.parse(localStorage.tasks));
-    console.log(JSON.parse(localStorage.tags));
+    let local_tasks = JSON.parse(localStorage.tasks)
+    let local_tags = JSON.parse(localStorage.tags)
+    for(let i in local_tags) {
+        this.tags[local_tags[i].tag] = 0
+    }
+    this.tags['break'] = 0
+    for(let i in local_tasks) {
+        if (local_tasks[i].completed) {
+            this.completed_tasks = local_tasks[i]
+        }
+        if (this.tags[local_tasks[i].tag] !== undefined) {
+            this.tags[local_tasks[i].tag] += local_tasks[i].timespent
+        }
+    }
+    console.log(this.completed_tasks)
+    console.log(Object.keys(this.tags))
+    console.log(Object.values(this.tags))
   },
 };
 </script>
