@@ -165,6 +165,8 @@ export default {
   },
   mounted() {
     this.modals["resetTasksModal"] = new Modal(this.$refs["resetTasksModal"]);
+    console.log(JSON.parse(localStorage.tasks));
+    console.log(JSON.parse(localStorage.tags));
   },
 };
 </script>
