@@ -78,12 +78,12 @@
                             </div>
                             <hr/>
                         </div>
-                        <div v-for="task in tasks" class="tasklist-item" :key="task.id">
-                            <div class="w-100" v-if="task.visible !== false">
-                                <TaskEntry :id="task.id" :completed="task.completed" :task-name="task.name"
-                                        :tag="task.tag" :due-date="task.duedate" :tag-list="tags"
-                                        :stopwatch-time="task.timespent" :starred="task.starred"
-                                        :running="task.id === runningId"
+                        <div v-for="idx in shownIndices" class="tasklist-item" :key="tasks[idx].id">
+                            <div class="w-100" v-if="tasks[idx].visible !== false">
+                                <TaskEntry :id="tasks[idx].id" :completed="tasks[idx].completed" :task-name="tasks[idx].name"
+                                        :tag="tasks[idx].tag" :due-date="tasks[idx].duedate" :tag-list="tags"
+                                        :stopwatch-time="tasks[idx].timespent" :starred="tasks[idx].starred"
+                                        :running="tasks[idx].id === runningId"
 
                                         @changeTimer="changeTimer"
                                         @increaseTimer="increaseTimer"
@@ -443,6 +443,21 @@
             this.modals['finishDayModal'] = new Modal(this.$refs['finishDayModal']);
             this.modals['addTagModal'] = new Modal(this.$refs['addTagModal']);
             this.modals['breakModal'] = new Modal(this.$refs['breakModal'], {backdrop:'static', keyboard:false});
+        },
+
+        computed: {
+            shownIndices() {
+                let starred = [];
+                let nonstarred = [];
+                for (let i = 0; i < this.tasks.length; ++i) {
+                    if (this.tasks[i].visible && this.tasks[i].starred) {
+                        starred.push(i);
+                    } else if (this.tasks[i].visible) {
+                        nonstarred.push(i);
+                    }
+                }
+                return starred.concat(nonstarred);
+            }
         },
 
         watch: {
