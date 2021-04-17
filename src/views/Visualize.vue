@@ -57,9 +57,9 @@
           <div class="col card vis-card">
             <div class="card-body">
               <h5 class="card-title">today's tasks</h5>
-              <PieChart
-                :labels="Object.keys(tags)"
-                :data="Object.values(tags)"
+              <PieChart :key="JSON.stringify(this.tags)"
+                :titles="keys"
+                :data="values"
               />
             </div>
           </div>
@@ -159,7 +159,10 @@ export default {
       tasks: [],
       completed_tasks: [],
       tags: {},
-      numPerTag: []
+      numPerTag: [],
+
+      keys: [],
+      values: []
     };
   },
   methods: {
@@ -167,6 +170,16 @@ export default {
       localStorage.clear();
     },
   },
+  // computed: {
+  //   keys() {
+  //     console.log(Object.keys(this.tags));
+  //     return Object.keys(this.tags);
+  //   },
+  //   values() {
+  //     console.log(Object.values(this.tags));
+  //     return Object.values(this.tags);
+  //   }
+  // },
   mounted() {
     this.modals["resetTasksModal"] = new Modal(this.$refs["resetTasksModal"]);
     let local_tasks = JSON.parse(localStorage.tasks)
@@ -184,8 +197,11 @@ export default {
         }
     }
     console.log(this.completed_tasks)
-    console.log(Object.keys(this.tags))
-    console.log(Object.values(this.tags))
+    console.log(this.tags);
+    this.keys = Object.keys(this.tags);
+    this.values = Object.values(this.tags);
+    console.log(this.keys);
+    console.log(this.values);
   },
 };
 </script>

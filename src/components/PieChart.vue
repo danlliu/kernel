@@ -39,6 +39,10 @@
             }
         },
         mounted() {
+
+            console.log(this.titles);
+            console.log(this.data);
+
             this.chart = new Chart(this.$refs['chart'], {
                 type: "doughnut",
                 data: {
