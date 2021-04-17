@@ -53,35 +53,6 @@
         id="newTaskFormSpace"
       />
       <div class="body p-3" v-bind:class="isAdding && 'smaller'" id="dashboard">
-        <!--                <div class="row justify-content-between mb-4" id="task-table-header">-->
-        <!--                    <div class="col">-->
-        <!--                        <div class="btn-group">-->
-        <!--                            <button class="btn btn-outline-secondary bi-sort-up"/>-->
-        <!--                            <button class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"-->
-        <!--                                    data-bs-toggle="dropdown">Sort by Due-->
-        <!--                                Date </button>-->
-        <!--                            <div class="dropdown-menu">-->
-        <!--                                <a class="dropdown-item">Sort by Due Date</a>-->
-        <!--                                <a class="dropdown-item">Sort by Time Elapsed</a>-->
-        <!--                                <a class="dropdown-item">Sort by Tag</a>-->
-        <!--                                <a class="dropdown-item">Sort by Starred</a>-->
-        <!--                            </div>-->
-        <!--                        </div>-->
-        <!--                    </div>-->
-        <!--                    <div class="col d-flex justify-content-end">-->
-        <!--                        <div class="btn-group">-->
-        <!--                            <button class="btn btn-outline-secondary bi-filter" disabled aria-disabled="true"/>-->
-        <!--                            <button class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"-->
-        <!--                                    data-bs-toggle="dropdown">Show <span class="badge bg-secondary">all tags</span></button>-->
-        <!--                            <div class="dropdown-menu" style="overflow-y: auto; max-height: 768%;">-->
-        <!--                                <a class="dropdown-item"><span class="badge bg-secondary">all tags</span></a>-->
-        <!--                                <a v-for="tag in tags" class="dropdown-item" :key="tag.tag">-->
-        <!--                                    <span class="badge tag" :class="'tag-'+tag.style">#{{tag.tag}}</span>-->
-        <!--                                </a>-->
-        <!--                            </div>-->
-        <!--                        </div>-->
-        <!--                    </div>-->
-        <!--                </div>-->
         <div id="tasks">
           <transition-group
             name="tasklist"
@@ -661,6 +632,20 @@ export default {
   transition: margin-left 0.75s ease, margin-right 0.75s ease;
 }
 
+#header h6 {
+  transition: font-size 0.75s ease;
+}
+
+@media only screen and (max-width: 1152px) {
+  #dashboard > div {
+    margin: 0;
+  }
+
+  #header h6 {
+    font-size: smaller;
+  }
+}
+
 #dashboard.smaller {
   width: 60%;
 }
@@ -721,5 +706,11 @@ export default {
 .tasklist-leave-active {
   position: absolute;
   width: 70% !important;
+}
+
+@media only screen and (max-width: 1152px) {
+  .tasklist-leave-active {
+    width: 100% !important;
+  }
 }
 </style>

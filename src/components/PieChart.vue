@@ -1,6 +1,6 @@
 <template>
-    <div class="container-fluid">
-        <canvas ref="chart" class="w-100"/>
+    <div class="d-flex justify-content-center">
+        <canvas ref="chart"/>
     </div>
 </template>
 
@@ -28,23 +28,54 @@
                 data: {
                     labels: this.titles,
                     datasets: [{
-                        label: 'doughnut yum',
+                        label: "doughnut yum",
                         data: this.data,
                         backgroundColor: this.backgroundColor,
                         hoverOffset: 4
                     }]
                 },
                 options: {
-                    tooltips: {
-                        mode: 'label',
-                        callbacks: {
-                            label: function(tooltipItem, data) {
-                                var indice = tooltipItem.index;
-                                return  data.labels[indice] +' '+data.datasets[0].data[indice] + '';
+                    responsive: false,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                title: function(context) {
+                                    return context[0]['label'];
+                                },
+                                label: function(context) {
+
+                                    let value = context['raw'];
+                                    let label = "";
+
+                                    if (value !== null) {
+                                        let totalTime = value;
+                                        let seconds = Math.floor(totalTime % 60);
+                                        let minutes = Math.floor(totalTime / 60) % 60;
+                                        let hours = Math.floor(totalTime / 3600);
+                                        let hourString = (hours === 0) ? "" : (hours < 10 ? `0${hours}` : `${hours}`) +
+                                            ":";
+                                        let minuteString = (minutes === 0) ? "0:" : (minutes < 10 ? `0${minutes}` :
+                                            `${minutes}`) + ":";
+                                        let secondString = (seconds < 10 ? `0${seconds}` : `${seconds}`);
+                                        label = `${hourString}${minuteString}${secondString}`;
+                                    }
+                                    return label;
+                                }
                             }
                         }
                     }
                 }
+                // options: {
+                //     tooltips: {
+                //         mode: 'label',
+                //         callbacks: {
+                //             label: function(tooltipItem, data) {
+                //                 var indice = tooltipItem.index;
+                //                 return  data.labels[indice] +' '+data.datasets[0].data[indice] + '';
+                //             }
+                //         }
+                //     }
+                // }
             })
         }
     }

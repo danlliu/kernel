@@ -111,5 +111,9 @@
 </script>
 
 <style scoped>
-
+    @media only screen and (max-width: 1152px) {
+        h4 {
+            font-size: 1.25rem;
+        }
+    }
 </style>
