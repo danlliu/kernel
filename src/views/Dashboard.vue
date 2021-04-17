@@ -163,7 +163,6 @@
           <label for="tasknameInput">Task name</label>
         </div>
         <div class="input-group form-floating mb-0">
-          <span class="input-group-text">#</span>
           <div class="btn-group">
             <button
               class="btn btn-outline-secondary dropdown-toggle"
@@ -177,7 +176,7 @@
                 class="badge tag"
                 :class="'tag-' + addingTask.tagstyle"
               >
-                #{{ addingTask.tag }}
+                {{ addingTask.tag }}
               </span>
             </button>
             <div
@@ -199,8 +198,7 @@
                 "
               >
                 <span class="badge tag" :class="'tag-' + tag.style"
-                  >#{{ tag.tag }}</span
-                >
+                  >{{ tag.tag }}</span>
               </a>
             </div>
           </div>
@@ -242,7 +240,6 @@
           <div class="modal-body">
             <form @submit.prevent="newTag">
               <div class="input-group mb-3">
-                <span class="input-group-text">#</span>
                 <input
                   type="text"
                   class="form-control"
@@ -285,9 +282,7 @@
                       @click="addingTag.style = style"
                     />
                     <label class="form-check-label ms-1" :for="'tag' + style">
-                      <span class="badge tag" :class="'tag-' + style"
-                        >#tag</span
-                      >
+                      <span class="badge tag" :class="'tag-' + style">tag</span>
                     </label>
                   </div>
                 </div>

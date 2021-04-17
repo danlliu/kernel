@@ -4,7 +4,10 @@
             <input type="checkbox" v-model="Dcompleted" @click="onChecked" autocomplete="off"> <!-- autocomplete prevents caching -->
         </div>
         <div class="col-4">
-            <h6 class="mb-0"><span class="badge tag" v-bind:class="`tag-${tagColorIndex}`">#{{tag}}</span></h6>
+            <h6 class="mb-0">
+                <span v-if="tag === ''" class="badge bg-secondary">no tag</span>
+                <span v-else class="badge tag" v-bind:class="`tag-${tagColorIndex}`">{{tag}}</span>
+            </h6>
             <h4 class="mb-0">{{taskName}}</h4>
         </div>
         <div class="col-1">
