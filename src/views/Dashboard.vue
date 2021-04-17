@@ -521,6 +521,8 @@ export default {
 
     newTag: function () {
       this.tags.push({ tag: this.addingTag.name, style: this.addingTag.style });
+      this.addingTask.tag = this.addingTag.name;
+      this.addingTask.tagstyle = this.addingTag.style;
       this.addingTag = { tag: "", style: 0 };
       this.modals["addTagModal"].hide();
     },
