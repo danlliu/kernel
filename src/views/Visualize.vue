@@ -25,7 +25,7 @@
 
     <div class="justify-content-end w-100" style="margin-top: 180px">
       <h1>kernel: visualize</h1>
-      <ul class="nav nav-tabs nav-fill">
+      <!-- <ul class="nav nav-tabs nav-fill">
         <li class="nav-item">
           <a
             class="nav-link"
@@ -50,13 +50,13 @@
             >all time</a
           >
         </li>
-      </ul>
+      </ul> -->
       <div v-if="tab === 0" class="infobox container-fluid">
         <h2>today's statistics</h2>
         <div class="row m-3">
           <div class="col card vis-card">
             <div class="card-body">
-              <h5 class="card-title">today's tasks</h5>
+              <h5 class="card-title">time spent per tag</h5>
               <PieChart :key="JSON.stringify(this.tags)"
                 :titles="keys"
                 :data="values"
@@ -66,13 +66,8 @@
           </div>
           <div class="col card vis-card">
             <div class="card-body">
-              <h5 class="card-title">time spent per tag</h5>
-            </div>
-          </div>
-          <div class="col card vis-card">
-            <div class="card-body">
-              <h5 class="card-title">tasks completed today</h5>
-                <PieChart :key="JSON.stringify(this.tags)"
+              <h5 class="card-title">number of tasks completed per tag</h5>
+              <PieChart :key="JSON.stringify(this.tags)"
                 :titles="comp_keys"
                 :data="comp_values"
                 :backgroundColor="colors"
@@ -80,12 +75,6 @@
             </div>
           </div>
         </div>
-      </div>
-      <div v-if="tab === 1" class="infobox container-fluid">
-        <h2>this week's statistics</h2>
-      </div>
-      <div v-if="tab === 2" class="infobox container-fluid">
-        <h2>all time statistics</h2>
       </div>
     </div>
 
@@ -213,14 +202,17 @@ export default {
     this.modals["resetTasksModal"] = new Modal(this.$refs["resetTasksModal"]);
     let local_tasks = JSON.parse(localStorage.tasks)
     let local_tags = JSON.parse(localStorage.tags)
+    console.log(local_tasks)
     console.log(local_tags)
     for(let i in local_tags) {
         this.tags[local_tags[i].tag] = 0
-        this.completed_tasks[local_tasks[i].tag] = 0
+        this.completed_tasks[local_tags[i].tag] = 0
     }
-    this.tags['break'] = 1
+    console.log(this.completed_tasks)
+    this.tags['break'] = 0
     for(let i in local_tasks) {
         if (local_tasks[i].completed) {
+          console.log(local_tasks[i])
           this.completed_tasks[local_tasks[i].tag] += 1
         }
         if (this.tags[local_tasks[i].tag] !== undefined) {
@@ -232,8 +224,6 @@ export default {
         }
     }
     let my_keys = Object.keys(this.tags)
-    console.log(my_keys)
-    console.log(this.tagToStlye)
     for(let i in my_keys){
       //this.colors.push(this.color_keys[this.tagToStlye[my_keys[i]])
       if(my_keys[i] == "no tag"){
@@ -243,22 +233,15 @@ export default {
         this.colors.push(this.color_keys['Br'])
       }
       else{
-        console.log(i)
-        console.log(local_tags[i])
-        console.log(local_tags[i].style)
         this.colors.push(this.color_keys[local_tags[i].style])
       }
     }
     console.log(this.colors)
     console.log(this.completed_tasks)
-    console.log(this.tags);
     this.keys = Object.keys(this.tags);
     this.values = Object.values(this.tags);
     this.comp_keys = Object.keys(this.completed_tasks)
     this.comp_values = Object.values(this.completed_tasks)
-    console.log(this.keys);
-    console.log(this.values);
-    console.log(this.colors)
   },
 };
 </script>
