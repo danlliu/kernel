@@ -571,6 +571,7 @@ export default {
       );
     },
     startBreak: function () {
+      this.changeTimer(this.runningId);
       for (let i in this.tasks) {
         if (this.tasks[i].tag === "break") {
           this.startingBreakTime = this.tasks[i].timespent;
