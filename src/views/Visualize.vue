@@ -60,6 +60,7 @@
               <PieChart :key="JSON.stringify(this.tags)"
                 :titles="keys"
                 :data="values"
+                :backgroundColor="colors"
               />
             </div>
           </div>
@@ -71,6 +72,11 @@
           <div class="col card vis-card">
             <div class="card-body">
               <h5 class="card-title">tasks completed today</h5>
+                <PieChart :key="JSON.stringify(this.tags)"
+                :titles="comp_keys"
+                :data="comp_values"
+                :backgroundColor="colors"
+              />
             </div>
           </div>
         </div>
@@ -157,18 +163,40 @@ export default {
       modals: {},
       tab: 0,
       tasks: [],
-      completed_tasks: [],
+      completed_tasks: {},
       tags: {},
-      numPerTag: [],
-
+      colors: [],
+      color_keys: {},
       keys: [],
-      values: []
+      values: [],
+      comp_keys: [],
+      comp_values: []
     };
   },
   methods: {
     clearAll: function () {
       localStorage.clear();
     },
+    makeColorMap: function() {
+      this.color_keys['0'] = "#e3170aff";
+      this.color_keys['1'] = "#5e8c61ff";
+      this.color_keys['2'] = "#407076ff";
+      this.color_keys['3'] = "#f7b32bff";
+      this.color_keys['4'] = "#2bd9feff";
+      this.color_keys['5'] = "#7353baff";
+      this.color_keys['6'] = "#04f06aff";
+      this.color_keys['7'] = "#e1bc29ff";
+      this.color_keys['8'] = "#be3e82ff";
+      this.color_keys['9'] = "#623ceaff";
+      this.color_keys['a'] = "#e15554ff";
+      this.color_keys['b'] = "#b2b1cfff";
+      this.color_keys['c'] = "#84c318ff";
+      this.color_keys['d'] = "#e6beaeff";
+      this.color_keys['e'] = "#b98ea7ff";
+      this.color_keys['f'] = "#17bebbff";
+      this.color_keys['Br'] = "#0d6efd";
+      this.color_keys['No'] = "#6c757d";
+    }
   },
   // computed: {
   //   keys() {
@@ -181,27 +209,56 @@ export default {
   //   }
   // },
   mounted() {
+    this.makeColorMap();
     this.modals["resetTasksModal"] = new Modal(this.$refs["resetTasksModal"]);
     let local_tasks = JSON.parse(localStorage.tasks)
     let local_tags = JSON.parse(localStorage.tags)
+    console.log(local_tags)
     for(let i in local_tags) {
         this.tags[local_tags[i].tag] = 0
+        this.completed_tasks[local_tasks[i].tag] = 0
     }
-    this.tags['break'] = 0
+    this.tags['break'] = 1
     for(let i in local_tasks) {
         if (local_tasks[i].completed) {
-            this.completed_tasks = local_tasks[i]
+          this.completed_tasks[local_tasks[i].tag] += 1
         }
         if (this.tags[local_tasks[i].tag] !== undefined) {
-            this.tags[local_tasks[i].tag] += local_tasks[i].timespent
+          this.tags[local_tasks[i].tag] += local_tasks[i].timespent
+        }
+        else {
+          console.log(local_tasks[i])
+          this.tags["no tag"] += local_tasks[i].timespent
         }
     }
+    let my_keys = Object.keys(this.tags)
+    console.log(my_keys)
+    console.log(this.tagToStlye)
+    for(let i in my_keys){
+      //this.colors.push(this.color_keys[this.tagToStlye[my_keys[i]])
+      if(my_keys[i] == "no tag"){
+        this.colors.push(this.color_keys['No'])
+      }
+      else if(my_keys[i] == "break"){
+        this.colors.push(this.color_keys['Br'])
+      }
+      else{
+        console.log(i)
+        console.log(local_tags[i])
+        console.log(local_tags[i].style)
+        this.colors.push(this.color_keys[local_tags[i].style])
+      }
+    }
+    console.log(this.colors)
     console.log(this.completed_tasks)
     console.log(this.tags);
     this.keys = Object.keys(this.tags);
     this.values = Object.values(this.tags);
+    this.comp_keys = Object.keys(this.completed_tasks)
+    this.comp_values = Object.values(this.completed_tasks)
     console.log(this.keys);
     console.log(this.values);
+    console.log(this.colors)
   },
 };
 </script>
