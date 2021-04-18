@@ -365,7 +365,7 @@
         bottom: 32px;
         color: white;
       "
-      to="/stats"
+      to="/stats" append
     >
       <span class="hover-button-text">stats</span>
     </router-link>
@@ -525,7 +525,7 @@ export default {
       }
       //this.$forceUpdate()
       //this.storeData();
-      window.location.pathname = "/stats";
+      window.location.pathname += "stats";
     },
     timeElapsedString: function (time) {
       let displayTime = time - this.startingBreakTime;
