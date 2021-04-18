@@ -30,10 +30,12 @@
           <div class="col card vis-card">
             <div class="card-body">
               <h5 class="card-title">time spent per tag</h5>
-              <PieChart :key="JSON.stringify(this.tags)"
+              <PieChart
+                :key="JSON.stringify(this.tags)"
                 :titles="keys"
                 :data="values"
-                :backgroundColor="colors" :mode="'time'"
+                :backgroundColor="colors"
+                :mode="'time'"
               />
             </div>
           </div>
@@ -41,13 +43,20 @@
             <div class="card-body">
               <h5 class="card-title">all tasks completed this session</h5>
               <ul class="list-group">
-                <li v-for="task of completed_tasks" :key="task.id"
-                    class="list-group-item d-flex justify-content-between align-items-center">
+                <li
+                  v-for="task of completed_tasks"
+                  :key="task.id"
+                  class="list-group-item d-flex justify-content-between align-items-center"
+                >
                   <div class="ms-2 me-auto">
-                    <span class="badge tag" :class="'tag-'+tagToStyle[task.tag]">{{task.tag}}</span>
-                    <h6>{{task.name}}</h6>
+                    <span
+                      class="badge tag"
+                      :class="'tag-' + tagToStyle[task.tag]"
+                      >{{ task.tag }}</span
+                    >
+                    <h6>{{ task.name }}</h6>
                   </div>
-                  <span>{{formatTime(task.timespent)}}</span>
+                  <span>{{ formatTime(task.timespent) }}</span>
                 </li>
               </ul>
             </div>
@@ -138,45 +147,92 @@ export default {
       keys: [],
       values: [],
       comp_keys: [],
-      comp_values: []
+      comp_values: [],
     };
   },
   methods: {
     clearAll: function () {
       localStorage.clear();
+      let local_tasks = {};
+      let local_tags = {};
+      console.log(local_tasks);
+      console.log(local_tags);
+      for (let i in local_tags) {
+        this.tagToStyle[local_tags[i].tag] = local_tags[i].style;
+        this.tags[local_tags[i].tag] = 0;
+        this.completed_tasks[local_tags[i].tag] = 0;
+      }
+      console.log(this.completed_tasks);
+      this.tags["break"] = 0;
+      this.tags[""] = 0;
+      for (let i in local_tasks) {
+        if (local_tasks[i].completed) {
+          console.log(local_tasks[i]);
+          this.completed_tasks.push(local_tasks[i]);
+        }
+        if (this.tags[local_tasks[i].tag] !== undefined) {
+          this.tags[local_tasks[i].tag] += local_tasks[i].timespent;
+        }
+        // else {
+        //   console.log(local_tasks[i])
+        //   this.tags["no tag"] += local_tasks[i].timespent
+        // }
+      }
+      let my_keys = Object.keys(this.tags);
+      for (let i in my_keys) {
+        //this.colors.push(this.color_keys[this.tagToStlye[my_keys[i]])
+        if (my_keys[i] == "") {
+          this.colors.push(this.color_keys["No"]);
+        } else if (my_keys[i] == "break") {
+          this.colors.push(this.color_keys["Br"]);
+        } else {
+          this.colors.push(this.color_keys[local_tags[i].style]);
+        }
+      }
+      console.log(this.colors);
+      console.log(this.completed_tasks);
+      this.keys = Object.keys(this.tags);
+      for (let i in this.keys) {
+        if (this.keys[i] === "") this.keys[i] = "no tag";
+      }
+      this.values = Object.values(this.tags);
+      this.comp_keys = Object.keys(this.completed_tasks);
+      this.comp_values = Object.values(this.completed_tasks);
     },
     formatTime: function (value) {
       let totalTime = value;
       let seconds = Math.floor(totalTime % 60);
       let minutes = Math.floor(totalTime / 60) % 60;
       let hours = Math.floor(totalTime / 3600);
-      let hourString = (hours === 0) ? "" : (hours < 10 ? `0${hours}` : `${hours}`) +
-              ":";
-      let minuteString = (minutes === 0) ? "0:" : (minutes < 10 ? `0${minutes}` :
-              `${minutes}`) + ":";
-      let secondString = (seconds < 10 ? `0${seconds}` : `${seconds}`);
+      let hourString =
+        hours === 0 ? "" : (hours < 10 ? `0${hours}` : `${hours}`) + ":";
+      let minuteString =
+        minutes === 0
+          ? "0:"
+          : (minutes < 10 ? `0${minutes}` : `${minutes}`) + ":";
+      let secondString = seconds < 10 ? `0${seconds}` : `${seconds}`;
       return `${hourString}${minuteString}${secondString}`;
     },
-    makeColorMap: function() {
-      this.color_keys['0'] = "#e3170aff";
-      this.color_keys['1'] = "#5e8c61ff";
-      this.color_keys['2'] = "#407076ff";
-      this.color_keys['3'] = "#f7b32bff";
-      this.color_keys['4'] = "#2bd9feff";
-      this.color_keys['5'] = "#7353baff";
-      this.color_keys['6'] = "#04f06aff";
-      this.color_keys['7'] = "#e1bc29ff";
-      this.color_keys['8'] = "#be3e82ff";
-      this.color_keys['9'] = "#623ceaff";
-      this.color_keys['a'] = "#e15554ff";
-      this.color_keys['b'] = "#b2b1cfff";
-      this.color_keys['c'] = "#84c318ff";
-      this.color_keys['d'] = "#e6beaeff";
-      this.color_keys['e'] = "#b98ea7ff";
-      this.color_keys['f'] = "#17bebbff";
-      this.color_keys['Br'] = "#0d6efd";
-      this.color_keys['No'] = "#6c757d";
-    }
+    makeColorMap: function () {
+      this.color_keys["0"] = "#e3170aff";
+      this.color_keys["1"] = "#5e8c61ff";
+      this.color_keys["2"] = "#407076ff";
+      this.color_keys["3"] = "#f7b32bff";
+      this.color_keys["4"] = "#2bd9feff";
+      this.color_keys["5"] = "#7353baff";
+      this.color_keys["6"] = "#04f06aff";
+      this.color_keys["7"] = "#e1bc29ff";
+      this.color_keys["8"] = "#be3e82ff";
+      this.color_keys["9"] = "#623ceaff";
+      this.color_keys["a"] = "#e15554ff";
+      this.color_keys["b"] = "#b2b1cfff";
+      this.color_keys["c"] = "#84c318ff";
+      this.color_keys["d"] = "#e6beaeff";
+      this.color_keys["e"] = "#b98ea7ff";
+      this.color_keys["f"] = "#17bebbff";
+      this.color_keys["Br"] = "#0d6efd";
+      this.color_keys["No"] = "#6c757d";
+    },
   },
   // computed: {
   //   keys() {
@@ -191,59 +247,56 @@ export default {
   mounted() {
     this.makeColorMap();
     this.modals["resetTasksModal"] = new Modal(this.$refs["resetTasksModal"]);
-    let local_tasks = JSON.parse(localStorage.tasks)
-    let local_tags = JSON.parse(localStorage.tags)
-    console.log(local_tasks)
-    console.log(local_tags)
-    for(let i in local_tags) {
-        this.tagToStyle[local_tags[i].tag] = local_tags[i].style;
-        this.tags[local_tags[i].tag] = 0
-        this.completed_tasks[local_tags[i].tag] = 0
+    let local_tasks = localStorage.tasks ? JSON.parse(localStorage.tasks) : {};
+    let local_tags = localStorage.tags ? JSON.parse(localStorage.tags) : {};
+    console.log(local_tasks);
+    console.log(local_tags);
+    for (let i in local_tags) {
+      this.tagToStyle[local_tags[i].tag] = local_tags[i].style;
+      this.tags[local_tags[i].tag] = 0;
+      this.completed_tasks[local_tags[i].tag] = 0;
     }
     console.log(this.completed_tasks);
-    this.tags['break'] = 0;
-    this.tags[''] = 0;
-    for(let i in local_tasks) {
-        if (local_tasks[i].completed) {
-          console.log(local_tasks[i]);
-          this.completed_tasks.push(local_tasks[i]);
-        }
-        if (this.tags[local_tasks[i].tag] !== undefined) {
-          this.tags[local_tasks[i].tag] += (local_tasks[i].timespent)
-        }
-        // else {
-        //   console.log(local_tasks[i])
-        //   this.tags["no tag"] += local_tasks[i].timespent
-        // }
+    this.tags["break"] = 0;
+    this.tags[""] = 0;
+    for (let i in local_tasks) {
+      if (local_tasks[i].completed) {
+        console.log(local_tasks[i]);
+        this.completed_tasks.push(local_tasks[i]);
+      }
+      if (this.tags[local_tasks[i].tag] !== undefined) {
+        this.tags[local_tasks[i].tag] += local_tasks[i].timespent;
+      }
+      // else {
+      //   console.log(local_tasks[i])
+      //   this.tags["no tag"] += local_tasks[i].timespent
+      // }
     }
-    let my_keys = Object.keys(this.tags)
-    for(let i in my_keys){
+    let my_keys = Object.keys(this.tags);
+    for (let i in my_keys) {
       //this.colors.push(this.color_keys[this.tagToStlye[my_keys[i]])
-      if(my_keys[i] == ""){
-        this.colors.push(this.color_keys['No'])
-      }
-      else if(my_keys[i] == "break"){
-        this.colors.push(this.color_keys['Br'])
-      }
-      else{
-        this.colors.push(this.color_keys[local_tags[i].style])
+      if (my_keys[i] == "") {
+        this.colors.push(this.color_keys["No"]);
+      } else if (my_keys[i] == "break") {
+        this.colors.push(this.color_keys["Br"]);
+      } else {
+        this.colors.push(this.color_keys[local_tags[i].style]);
       }
     }
-    console.log(this.colors)
-    console.log(this.completed_tasks)
+    console.log(this.colors);
+    console.log(this.completed_tasks);
     this.keys = Object.keys(this.tags);
     for (let i in this.keys) {
-      if (this.keys[i] === '') this.keys[i] = 'no tag';
+      if (this.keys[i] === "") this.keys[i] = "no tag";
     }
     this.values = Object.values(this.tags);
-    this.comp_keys = Object.keys(this.completed_tasks)
-    this.comp_values = Object.values(this.completed_tasks)
+    this.comp_keys = Object.keys(this.completed_tasks);
+    this.comp_values = Object.values(this.completed_tasks);
   },
 };
 </script>
 
 <style scoped>
-
 .vis-card {
   margin: 0.5rem;
   min-width: 350px;
