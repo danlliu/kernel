@@ -153,48 +153,20 @@ export default {
   methods: {
     clearAll: function () {
       localStorage.clear();
-      let local_tasks = {};
       let local_tags = {};
-      console.log(local_tasks);
-      console.log(local_tags);
+      this.colors = ["#0d6efd", "#6c757d"];
       for (let i in local_tags) {
         this.tagToStyle[local_tags[i].tag] = local_tags[i].style;
         this.tags[local_tags[i].tag] = 0;
         this.completed_tasks[local_tags[i].tag] = 0;
       }
-      console.log(this.completed_tasks);
+      this.completed_tasks = [];
+      this.tags = [];
       this.tags["break"] = 0;
       this.tags[""] = 0;
-      for (let i in local_tasks) {
-        if (local_tasks[i].completed) {
-          console.log(local_tasks[i]);
-          this.completed_tasks.push(local_tasks[i]);
-        }
-        if (this.tags[local_tasks[i].tag] !== undefined) {
-          this.tags[local_tasks[i].tag] += local_tasks[i].timespent;
-        }
-        // else {
-        //   console.log(local_tasks[i])
-        //   this.tags["no tag"] += local_tasks[i].timespent
-        // }
-      }
-      let my_keys = Object.keys(this.tags);
-      for (let i in my_keys) {
-        //this.colors.push(this.color_keys[this.tagToStlye[my_keys[i]])
-        if (my_keys[i] == "") {
-          this.colors.push(this.color_keys["No"]);
-        } else if (my_keys[i] == "break") {
-          this.colors.push(this.color_keys["Br"]);
-        } else {
-          this.colors.push(this.color_keys[local_tags[i].style]);
-        }
-      }
-      console.log(this.colors);
-      console.log(this.completed_tasks);
-      this.keys = Object.keys(this.tags);
-      for (let i in this.keys) {
-        if (this.keys[i] === "") this.keys[i] = "no tag";
-      }
+      this.tasks = [];
+
+      this.keys = ["break", "no tag"];
       this.values = Object.values(this.tags);
       this.comp_keys = Object.keys(this.completed_tasks);
       this.comp_values = Object.values(this.completed_tasks);
